@@ -6,7 +6,9 @@ plugins {
 android {
     namespace 'com.example.newstemplate'
     compileSdk 33
-
+    buildFeatures {
+        viewBinding true
+    }
     defaultConfig {
         applicationId "com.example.newstemplate"
         minSdk 24
