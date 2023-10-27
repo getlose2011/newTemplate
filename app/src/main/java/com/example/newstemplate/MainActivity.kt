@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private fun getTaskData(): ArrayList<Tasks> {
 
         return  ArrayList<Tasks>().apply {
-
+            add(Tasks("字級大小", TxtSizeActivity::class.java))
         }
 
     }
