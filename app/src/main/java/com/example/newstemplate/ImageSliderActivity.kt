@@ -1,6 +1,5 @@
 package com.example.newstemplate
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +14,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.ceil
 
 data class ImageSliderObj(val imageUrl:String,val title:String)
 
@@ -70,42 +68,20 @@ class ImageSliderActivity : AppCompatActivity() {
                     }
                 }
 
+                //SliderLayout增加 indicator layout
+                imageSlider.setCustomIndicator(imageSliderIndicator)
+
                 imageSlider.apply {
                     //開始的圖片位置
                     setCurrentPosition(2, true)
                     //delay => 第一次執行滑動時間
                     //duration => 每次滑動的時間
                     //autoRecover => false 使用者手指停留在該圖片時，則會停留在該圖片，不會繼續在滑動
-                    startAutoCycle(10000L, 5000L, true)
+                    startAutoCycle(3000L, 3000L, true)
                 }
-
-                //slider的indicator
-                setSilderPagerIndicator(w, data.count())
 
             }
         }
-    }
-
-    /**
-    * w: 螢幕寬
-     * c: 共有幾個indicator
-    * */
-    private fun setSilderPagerIndicator(w:Int,i:Int){
-        //每一個indicator的寬度,每一個indicator在減6，不會讓indicator跑版
-        var indicatorWidth = ceil((w / i).toDouble()) -(i*6)
-
-        //SliderLayout增加自訂的indicator
-        imageSlider.setCustomIndicator(
-               imageSliderIndicator.apply {
-                   //selected,unselected color
-                   setDefaultIndicatorColor(Color.parseColor("#FFFC29"), Color.parseColor("#bcbcbc"))
-                   //長方形的indicator
-                   setDefaultIndicatorShape(PagerIndicator.Shape.Rectangle)
-                   //indicator長度,高度
-                   setDefaultIndicatorSize((indicatorWidth).toFloat(),8f, PagerIndicator.Unit.Px)
-               }
-           )
-
     }
 
 
