@@ -30,12 +30,15 @@ class MainActivity : AppCompatActivity() {
         var adapter  = MainAdapter(data, callback)
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerView.adapter = adapter
+
+        clickActivity(ImageSliderActivity::class.java)
     }
 
     private fun getTaskData(): ArrayList<Tasks> {
 
         return  ArrayList<Tasks>().apply {
             add(Tasks("字級大小", TxtSizeActivity::class.java))
+            add(Tasks("圖片 slider", ImageSliderActivity::class.java))
         }
 
     }
@@ -44,9 +47,13 @@ class MainActivity : AppCompatActivity() {
     private val callback = object : IMainAdapterListener {
 
         override fun click(activity: Class<*>) {
-            Intent(this@MainActivity, activity).also {
-                startActivity(it)
-            }
+            clickActivity(activity)
+        }
+    }
+
+    private fun clickActivity(activity: Class<*>){
+        Intent(this@MainActivity, activity).also {
+            startActivity(it)
         }
     }
 }
