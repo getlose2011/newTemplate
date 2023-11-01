@@ -1,5 +1,6 @@
 package com.example.newstemplate
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,10 @@ import com.example.newstemplate.databinding.RowMainItemBinding
 
 interface IMainAdapterListener{
     fun click(activity: Class<*>)
+}
+
+fun deleteCache(context: Context){
+    context.cacheDir.deleteRecursively()
 }
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +36,9 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerView.adapter = adapter
 
-        clickActivity(ImageSliderActivity::class.java)
+        //clickActivity(ImageSliderActivity::class.java)
+
+        deleteCache(this)
     }
 
     private fun getTaskData(): ArrayList<Tasks> {
@@ -39,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         return  ArrayList<Tasks>().apply {
             add(Tasks("字級大小", TxtSizeActivity::class.java))
             add(Tasks("圖片 slider", ImageSliderActivity::class.java))
+            add(Tasks("清除暫存資料", DeleteCacheActivity::class.java))
         }
 
     }
