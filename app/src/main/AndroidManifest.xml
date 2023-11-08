@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsTemplate">
         <activity
+            android:name=".DragAndDropActivity"
+            android:exported="false" />
+        <activity
             android:name=".DeleteCacheActivity"
             android:exported="false" />
         <activity

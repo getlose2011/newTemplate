@@ -36,9 +36,9 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerView.adapter = adapter
 
-        //clickActivity(ImageSliderActivity::class.java)
+        clickActivity(DragAndDropActivity::class.java)
 
-        deleteCache(this)
+        //deleteCache(this)
     }
 
     private fun getTaskData(): ArrayList<Tasks> {
@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("字級大小", TxtSizeActivity::class.java))
             add(Tasks("圖片 slider", ImageSliderActivity::class.java))
             add(Tasks("清除暫存資料", DeleteCacheActivity::class.java))
+            add(Tasks("drag & drop Recycer View", DragAndDropActivity::class.java))
         }
 
     }
