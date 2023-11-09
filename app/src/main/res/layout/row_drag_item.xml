@@ -1,29 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rowDrogFrameLayout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="5dp"
 
-    <FrameLayout
+   >
+    <RelativeLayout
+        android:id="@+id/rowDrogRelativeLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/rowDrogCategoryNameBtn"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dragbg"
+        >
+
+        <TextView
+            android:id="@+id/rowDrogCategoryNameTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="名稱" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="政治政治"
+            android:textSize="16dp"
+            android:paddingBottom="2dp"/>
 
         <ImageView
             android:id="@+id/rowDrogIv"
-            android:visibility="gone"
-            android:src="@drawable/drag_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_alignParentEnd="true"
+            android:adjustViewBounds="true"
+            android:background="@drawable/drag_24"
+            android:gravity="center"
+            android:maxWidth="20dp"
+            android:minHeight="20dp"
+            android:layout_marginRight="-5dp"
+            android:layout_marginTop="-5dp"
             />
-    </FrameLayout>
+
+    </RelativeLayout>
+
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

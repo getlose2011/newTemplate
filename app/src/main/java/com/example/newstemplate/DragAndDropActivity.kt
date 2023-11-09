@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -15,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityDragAndDropBinding
 import com.example.newstemplate.databinding.RowDragItemBinding
 
-
+//https://stackoverflow.com/questions/51201482/android-percent-screen-width-in-recyclerview-item
 class DragAndDropActivity : AppCompatActivity() {
 
     private val TAG = "DragAndDropActivity"
@@ -144,11 +145,22 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
     private var checkEdit = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        //取得recycler view width
+        val recyclerViewWidth = (parent as RecyclerView).width
+
         val binding = RowDragItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+
+        //設定文字寬度
+        binding.rowDrogCategoryNameTxt.width = recyclerViewWidth / 4
+
+        //binding.rowDrogRelativeLayout.layoutParams = RelativeLayout.LayoutParams(
+        //    100,100
+        //)
         return DragAndDropItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         val category = data[position]
         (holder as DragAndDropItemViewHolder).setText(category.cn,category.move)
     }
@@ -210,12 +222,12 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
 
     inner class DragAndDropItemViewHolder(viewBinding : RowDragItemBinding) : RecyclerView.ViewHolder(viewBinding.root) {
         val TAG = "DragAndDropItemViewHolder"
-        private var btn: Button = viewBinding.rowDrogCategoryNameBtn
+        private var txt: TextView = viewBinding.rowDrogCategoryNameTxt
         private var iv: ImageView = viewBinding.rowDrogIv
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun setText(text:String,move: Boolean){
-            btn.text = text
+            txt.text = text
             iv.visibility = View.GONE
             if(move && checkEdit){
                 iv.visibility = View.VISIBLE
