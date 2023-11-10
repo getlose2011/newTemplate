@@ -1,6 +1,7 @@
 package com.example.newstemplate
 
 
+import android.R
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityDragAndDropBinding
 import com.example.newstemplate.databinding.RowDragItemBinding
 
+
 //https://stackoverflow.com/questions/51201482/android-percent-screen-width-in-recyclerview-item
+//http://www.devexchanges.info/2016/06/android-tip-auto-column-grid-layout-by.html?fbclid=IwAR1y9uPoGdOkilWZ9Rko9_hkVIFq_rMtTUHG_q546bMaZLoIKiFcX4eGC5M
 class DragAndDropActivity : AppCompatActivity() {
 
     private val TAG = "DragAndDropActivity"
@@ -150,17 +154,24 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
 
         val binding = RowDragItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
 
-        //設定文字寬度
-        binding.rowDrogCategoryNameTxt.width = recyclerViewWidth / 4
+        //方法1
+        //設定文字textview寬度
+        //binding.rowDrogCategoryNameTxt.width = recyclerViewWidth / 4
 
-        //binding.rowDrogRelativeLayout.layoutParams = RelativeLayout.LayoutParams(
-        //    100,100
-        //)
+        //方法2
+        // get RelativeLayout
+        val relativeLayout: RelativeLayout = binding.rowDrogRelativeLayout
+        // get LayoutParams,設置寬
+        val layoutParams = relativeLayout.layoutParams.apply {
+            width = (recyclerViewWidth - (4*30)) / 4
+        }
+        //重新設定RelativeLayout width
+        relativeLayout.layoutParams = layoutParams
+
         return DragAndDropItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         val category = data[position]
         (holder as DragAndDropItemViewHolder).setText(category.cn,category.move)
     }
