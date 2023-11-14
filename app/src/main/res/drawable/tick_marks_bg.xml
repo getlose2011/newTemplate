@@ -1,0 +1,11 @@
+<!-- res/drawable/rectangle_shape.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#BCBCBC" />
+
+    <size
+        android:height="14dp"
+        android:width="4dp" />
+
+</shape>

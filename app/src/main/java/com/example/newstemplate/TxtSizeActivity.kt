@@ -22,6 +22,7 @@ sealed class FontSize {
     data class XLarge(val type: String = "特大", val position: Float=100f) : FontSize()
 }
 
+//套件 => https://github.com/warkiz/TickSeekBar
 class TxtSizeActivity : AppCompatActivity() {
     private val TAG = "TxtSizeActivity"
     private lateinit var binding: ActivityTxtSizeBinding
