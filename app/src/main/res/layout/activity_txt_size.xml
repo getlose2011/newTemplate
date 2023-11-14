@@ -21,14 +21,15 @@
         app:tsb_thumb_color="#FBC02D"
         app:tsb_thumb_size="16dp"
         app:tsb_tick_marks_size="8dp"
-        app:tsb_tick_texts_color="#000000"
+        app:tsb_tick_texts_color="@color/selector_tick_texts_2_color"
         app:tsb_tick_texts_size="18sp"
         app:tsb_ticks_count="4"
         app:tsb_tick_marks_drawable="@drawable/tick_marks_bg"
         app:tsb_track_background_color="#BCBCBC"
         app:tsb_track_background_size="6dp"
         app:tsb_track_progress_color="#BCBCBC"
-        app:tsb_track_progress_size="6dp" />
+        app:tsb_track_progress_size="6dp"
+        />
 
     <TextView
         android:id="@+id/txtSizeTxv"
