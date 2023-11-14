@@ -13,20 +13,19 @@
         android:layout_height="200dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:indicator_visibility="invisible"/>
 
-    <com.daimajia.slider.library.Indicators.PagerIndicator
-        android:background="@color/black"
-        android:padding="8dp"
-        android:id="@+id/imageSliderIndicator"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/imageSliderIndicatorLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
+        android:background="@color/black"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageSlider"
-        app:unselected_drawable="@drawable/unselected"
-        app:selected_drawable="@drawable/selected"/>
-
+        android:padding="6dp"
+        android:gravity="center" />
 </androidx.constraintlayout.widget.ConstraintLayout>
