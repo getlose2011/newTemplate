@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityDragAndDropBinding
@@ -28,7 +27,7 @@ class DragAndDropActivity : AppCompatActivity() {
     //是否按了編輯按鈕,isEdit = true正在編輯
     private var isEdit = false
     private lateinit var data: ArrayList<Category>
-    private lateinit var adapter: DragAndDropAdapter
+    private lateinit var dAdapter: DragAndDropAdapter
     private lateinit var dragEditBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +43,13 @@ class DragAndDropActivity : AppCompatActivity() {
 
         data = getData()
 
-        adapter = DragAndDropAdapter(data)
-        binding.dragRecyclerView.layoutManager = GridLayoutManager(this,4)
-        binding.dragRecyclerView.adapter = adapter
+        dAdapter = DragAndDropAdapter(data)
+
+        binding.dragRecyclerView.apply {
+            adapter = dAdapter
+            dAdapter.setColumNum(getColumNum())
+        }
+
     }
 
     //編輯則套用attachToRecyclerView，完成則取消attachToRecyclerView
@@ -61,7 +64,7 @@ class DragAndDropActivity : AppCompatActivity() {
             itemTouchHelper.attachToRecyclerView(null)
         }
 
-        adapter.setDrag(isEdit)
+        dAdapter.setDrag(isEdit)
     }
 
     private val itemTouchHelper = ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(
@@ -89,7 +92,7 @@ class DragAndDropActivity : AppCompatActivity() {
             //有些分類固定不能動
             if(!data[e].move)return false
 
-            adapter.itemMove(f,t)
+            dAdapter.itemMove(f,t)
 
             return true
         }
@@ -108,7 +111,7 @@ class DragAndDropActivity : AppCompatActivity() {
                 ItemTouchHelper.ACTION_STATE_IDLE -> {
                     //drag 結束
                     if(s != CHECK_FROM_POS){
-                        adapter.changeSort(s,e)
+                        dAdapter.changeSort(s,e)
                     }
                     isDrag = false
                     s = CHECK_FROM_POS
@@ -147,6 +150,7 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
 
     private val TAG = "DragAndDropAdapter"
     private var checkEdit = false
+    private var sCount = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         //取得recycler view width
@@ -156,14 +160,14 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
 
         //方法1
         //設定文字textview寬度
-        //binding.rowDrogCategoryNameTxt.width = recyclerViewWidth / 4
+        //binding.rowDrogCategoryNameTxt.width = recyclerViewWidth / sCount
 
         //方法2
         // get RelativeLayout
         val relativeLayout: RelativeLayout = binding.rowDrogRelativeLayout
         // get LayoutParams,設置寬
         val layoutParams = relativeLayout.layoutParams.apply {
-            width = (recyclerViewWidth - (4*30)) / 4
+            width = (recyclerViewWidth - (4*30)) / sCount
         }
         //重新設定RelativeLayout width
         relativeLayout.layoutParams = layoutParams
@@ -229,6 +233,11 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
 
         //重新排序
         data.sortBy { it.sort }
+    }
+
+    //設定一列有幾個
+    fun setColumNum(columNum: Int) {
+        sCount = columNum
     }
 
     inner class DragAndDropItemViewHolder(viewBinding : RowDragItemBinding) : RecyclerView.ViewHolder(viewBinding.root) {
