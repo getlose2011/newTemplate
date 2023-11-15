@@ -48,13 +48,14 @@ class ImageSliderActivity : AppCompatActivity() {
         imageSliderIndicatorLinearLayout = binding.imageSliderIndicatorLinearLayout
 
         //取得資料
-        GlobalScope.launch {
+        GlobalScope.launch{
+            println("World!1 + ${Thread.currentThread().name}")
 
-            delay(1000)
             var data = getData()
-
+            println("World!2 + ${Thread.currentThread().name}")
 
             withContext(Dispatchers.Main) {
+                println("World!3 + ${Thread.currentThread().name}")
                 addIndicator(imageSliderIndicatorLinearLayout,data.count())
                 data.forEach { imageSliderObj ->
                     //slider object
@@ -160,21 +161,65 @@ class ImageSliderActivity : AppCompatActivity() {
         if(beforeIndicate != -1)imageSliderIndicatorLinearLayout.getChildAt(beforeIndicate).setBackgroundResource(R.drawable.unselected)
     }
 
-    private  fun getData(): ArrayList<ImageSliderObj> {       
-       
-            return  ArrayList<ImageSliderObj>().apply {
+    private suspend fun getData(): ArrayList<ImageSliderObj> {
 
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg","高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個 成長突飛猛進1"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg","高山峰親曝給兒子吃這個 成長突飛猛進2"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg","高山峰親曝給兒子吃這個 成長突飛猛進3"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747955_14884.jpg","高山峰親曝給兒子吃這個 成長突飛猛進4"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg","高山峰親曝給兒子吃這個高山峰親曝給兒5"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg","高山峰親曝給兒子吃這個 成長突飛猛進6"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg","高山峰親曝給兒子吃這個 成長突飛猛進7"))
-                add(ImageSliderObj("https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747955_14884.jpg","高山峰親曝給兒子吃這個 成長突飛猛進8"))
+        return  withContext(Dispatchers.IO) {
 
+            delay(2000)
+
+            ArrayList<ImageSliderObj>().apply {
+
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg",
+                        "高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個 成長突飛猛進1"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg",
+                        "高山峰親曝給兒子吃這個 成長突飛猛進2"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg",
+                        "高山峰親曝給兒子吃這個 成長突飛猛進3"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747955_14884.jpg",
+                        "高山峰親曝給兒子吃這個 成長突飛猛進4"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg",
+                        "高山峰親曝給兒子吃這個高山峰親曝給兒5"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg",
+                        "高山峰親曝給兒子吃這個 成長突飛猛進6"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg",
+                        "高山峰親曝給兒子吃這個 成長突飛猛進7"
+                    )
+                )
+                add(
+                    ImageSliderObj(
+                        "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747955_14884.jpg",
+                        "高山峰親曝給兒子吃這個 成長突飛猛進8"
+                    )
+                )
+
+            }
         }
-
     }
 
 }
