@@ -13,6 +13,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsTemplate">
         <activity
+            android:name=".BaseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LifeCycleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CustomSelectorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CanvasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PropertyAnimationMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PropertyMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewAnimationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AnimationActivity"
+            android:exported="false" />
+        <activity
             android:name=".DragAndDropActivity"
             android:exported="false" />
         <activity

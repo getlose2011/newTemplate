@@ -36,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerView.adapter = adapter
 
-        clickActivity(DragAndDropActivity::class.java)
+        //clickActivity(CustomSelectorActivity::class.java)
+        clickActivity(CanvasActivity::class.java)
 
         //deleteCache(this)
     }
