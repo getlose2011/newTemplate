@@ -17,6 +17,9 @@ class CanvasActivity : AppCompatActivity() {
         binding = ActivityCanvasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.canvasMyButton.setOnClickListener {
+            binding.canvasMyView.changeRectangleColor()
+        }
     }
 
 }

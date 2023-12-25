@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">NewsTemplate</string>
+
+    <!--icon font-->
+    <string name="iconFontLyrics">\ue92c</string>
+    <string name="iconFontPlay">\ue934</string>
+    <string name="iconFont900">\ue900</string>
+    <string name="iconFont90d">\ue90d</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

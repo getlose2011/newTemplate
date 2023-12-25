@@ -14,4 +14,18 @@ tools:context=".CanvasActivity">
         android:layout_height="wrap_content"
         android:src="@mipmap/image_default"   />
 
+    <com.example.newstemplate.component.MyCustomView
+        android:id="@+id/canvasMyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/image_default"   />
+
+    <Button
+        android:id="@+id/canvasMyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Button" />
+
 </RelativeLayout>
