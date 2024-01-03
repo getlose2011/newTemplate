@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(HomeActivity::class.java)
+        clickActivity(ImageActivity::class.java)
 
         //deleteCache(this)
 
@@ -54,6 +54,9 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("navigator",NavigatorActivity::class.java))
             add(Tasks("home",HomeActivity::class.java))
             add(Tasks("icon font",IconFontActivity::class.java))
+            add(Tasks("mp3",MediaActivity::class.java))
+            add(Tasks("animation", AnimationActivity::class.java))
+            add(Tasks("image size", ImageActivity::class.java))
         }
 
     }

@@ -4,17 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IconFontActivity">
 
-    <com.example.newstemplate.component.MyTextView
-        android:id="@+id/iconFontTxt"
+    tools:context=".MediaActivity">
+
+    <com.example.newstemplate.component.CustomImageView
+        android:id="@+id/imageIv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/iconFontLyrics"
-        app:ttfName="@string/iconTTfName"
-        android:textSize="80dp"
+        android:src="@mipmap/image_default"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:scale="@string/ratio_16_9"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

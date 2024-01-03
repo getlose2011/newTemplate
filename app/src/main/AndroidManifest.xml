@@ -13,9 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsTemplate">
         <activity
+            android:name=".ImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AnimationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MediaActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
-
         <activity
             android:name=".IconFontActivity"
             android:exported="false" />

@@ -57,4 +57,6 @@ dependencies {
 
     //下拉重載
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    //
+    implementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }

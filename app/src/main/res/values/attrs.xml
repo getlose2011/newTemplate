@@ -3,4 +3,13 @@
     <declare-styleable name="CustomGridLayoutRecycler">
         <attr name="sCount" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="CustomFontTextView">
+        <attr name="ttfName" format="string" />
+    </declare-styleable>
+
+    <!-- custom view attr -->
+    <declare-styleable name="CustomRatioImage">
+        <attr name="scale" format="string" />
+    </declare-styleable>
 </resources>

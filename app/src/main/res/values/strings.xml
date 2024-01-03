@@ -6,7 +6,14 @@
     <string name="iconFontPlay">\ue934</string>
     <string name="iconFont900">\ue900</string>
     <string name="iconFont90d">\ue90d</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="iconTTfName">icon</string>
+    <!--logo icon font-->
+    <string name="iconFontLogo">\ue91d</string>
+
+    <!-- custom view ratio-->
+    <string name="ratio_16_9">16_9</string>
+    <string name="ratio_4_3">4_3</string>
+    <string name="ratio_2_1">2_1</string>
 
 </resources>

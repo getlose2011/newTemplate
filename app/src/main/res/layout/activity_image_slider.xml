@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ImageSliderActivity">
-
-
-    <com.daimajia.slider.library.SliderLayout
-        android:id="@+id/imageSlider"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:indicator_visibility="invisible"/>
-
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/imageSliderIndicatorLinearLayout"
-        android:layout_width="match_parent"
+    android:id="@+id/homeNestedScrollView"
+>
+    <androidx.appcompat.widget.LinearLayoutCompat android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageSlider"
-        android:padding="6dp"
-        android:gravity="center" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        tools:context=".ImageSliderActivity"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="333333333333333333333333333333333333333333333222222222222222222224444444444444444444444444442222"
+            android:textSize="100dp"></TextView>
+
+        <com.daimajia.slider.library.SliderLayout
+            android:id="@+id/imageSlider"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:indicator_visibility="invisible"/>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/imageSliderIndicatorLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageSlider"
+            android:padding="6dp"
+            android:gravity="center" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="333333333333333333333333333333333333333333333333333333333333333333"
+            android:textSize="1000dp"></TextView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>    </androidx.core.widget.NestedScrollView>

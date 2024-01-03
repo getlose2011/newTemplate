@@ -1,23 +1,30 @@
 package com.example.newstemplate
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.OnScrollChangedListener
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.graphics.toRectF
+import androidx.core.widget.NestedScrollView
 import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.TextSliderView
 import com.daimajia.slider.library.Tricks.ViewPagerEx
 import com.example.newstemplate.databinding.ActivityImageSliderBinding
 import com.example.newstemplate.libraries.Generic
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 data class ImageSliderObj(val imageUrl:String,val title:String)
 
@@ -35,11 +42,13 @@ class ImageSliderActivity : AppCompatActivity() {
     private var currentIndicatorPosition = 0
     //image slider 少於幾張圖,要處理的動作
     private var imageSlidrLessNum = 2
-
+    var picasso:Picasso? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityImageSliderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        picasso = Picasso.with(this@ImageSliderActivity)
 
         //SliderLayout高度
         imageSlider = binding.imageSlider.apply {
@@ -53,6 +62,9 @@ class ImageSliderActivity : AppCompatActivity() {
 
             var data = getData()
             println("World!2 + ${Thread.currentThread().name}")
+
+
+
 
             withContext(Dispatchers.Main) {
                 println("World!3 + ${Thread.currentThread().name}")
@@ -71,6 +83,7 @@ class ImageSliderActivity : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
+                        picasso = picasso
                         //圖片及預設圖片
                         image(imageSliderObj.imageUrl).empty(R.mipmap.image_default)
                     }.also {
@@ -94,6 +107,14 @@ class ImageSliderActivity : AppCompatActivity() {
                 //只有一張圖則不輪播
                 if(data.count() < imageSlidrLessNum)imageSlider.stopAutoCycle()
 
+
+                var scrollListener:ViewTreeObserver.OnScrollChangedListener? = null
+
+
+                binding.homeNestedScrollView.viewTreeObserver.addOnScrollChangedListener(ddd)
+
+              //  binding.homeNestedScrollView.viewTreeObserver.addOnScrollChangedListener(ddd)
+
                 imageSlider.addOnPageChangeListener(object: ViewPagerEx.OnPageChangeListener{
                     override fun onPageScrolled(
                         position: Int,
@@ -101,7 +122,9 @@ class ImageSliderActivity : AppCompatActivity() {
                         positionOffsetPixels: Int
                     ) {
                         //TODO("Not yet implemented")
+                        Log.d(TAG, "addOnPageChangeListener: p=>${imageSlider.top}")
                     }
+
 
                     override fun onPageSelected(position: Int) {
                         Log.d(TAG, "onPageSelected: $position")
@@ -110,11 +133,46 @@ class ImageSliderActivity : AppCompatActivity() {
                     }
 
                     override fun onPageScrollStateChanged(state: Int) {
-                        //TODO("Not yet implemented")
+
+
                     }
 
+
+
+
+
                 })
-                
+
+            }
+        }
+
+    }
+
+    override fun onStop() {
+        imageSlider.stopAutoCycle()
+        picasso = null
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+    var show = true
+    private val ddd = OnScrollChangedListener {
+        val scrollBonuds = Rect()
+        binding.homeNestedScrollView.getHitRect(scrollBonuds)
+        if (imageSlider.getLocalVisibleRect(scrollBonuds)) {
+            Log.d(TAG, "homeNestedScrollView: viewTreeObserver => v")
+            if (!show) {
+                imageSlider.startAutoCycle()
+                show = true
+            }
+        } else {
+            Log.d(TAG, "homeNestedScrollView: viewTreeObserver => not v")
+            if (show) {
+                imageSlider.stopAutoCycle()
+                show = false
             }
         }
     }
