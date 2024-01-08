@@ -17,9 +17,9 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="333333333333333333333333333333333333333333333222222222222222222224444444444444444444444444442222"
-            android:textSize="100dp"></TextView>
+            android:layout_height="wrap_content"
+            android:text="1"
+     ></TextView>
 
         <com.daimajia.slider.library.SliderLayout
             android:id="@+id/imageSlider"

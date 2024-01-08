@@ -83,7 +83,7 @@ class ImageSliderActivity : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
-                        picasso = picasso
+                        //picasso = picasso
                         //圖片及預設圖片
                         image(imageSliderObj.imageUrl).empty(R.mipmap.image_default)
                     }.also {
@@ -115,41 +115,44 @@ class ImageSliderActivity : AppCompatActivity() {
 
               //  binding.homeNestedScrollView.viewTreeObserver.addOnScrollChangedListener(ddd)
 
-                imageSlider.addOnPageChangeListener(object: ViewPagerEx.OnPageChangeListener{
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int
-                    ) {
-                        //TODO("Not yet implemented")
-                        Log.d(TAG, "addOnPageChangeListener: p=>${imageSlider.top}")
-                    }
-
-
-                    override fun onPageSelected(position: Int) {
-                        Log.d(TAG, "onPageSelected: $position")
-                        changeIndicator(position,currentIndicatorPosition)
-                        currentIndicatorPosition = position
-                    }
-
-                    override fun onPageScrollStateChanged(state: Int) {
-
-
-                    }
-
-
-
-
-
-                })
+                imageSlider.addOnPageChangeListener(dddd)
 
             }
         }
 
     }
 
+    val dddd = object: ViewPagerEx.OnPageChangeListener{
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
+            //TODO("Not yet implemented")
+            Log.d(TAG, "addOnPageChangeListener: p=>${imageSlider.top}")
+        }
+
+
+        override fun onPageSelected(position: Int) {
+            Log.d(TAG, "onPageSelected: $position")
+            changeIndicator(position,currentIndicatorPosition)
+            currentIndicatorPosition = position
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+
+
+        }
+
+
+
+
+
+    }
+
     override fun onStop() {
         imageSlider.stopAutoCycle()
+        imageSlider.removeOnPageChangeListener(dddd)
         picasso = null
         super.onStop()
     }
@@ -230,49 +233,49 @@ class ImageSliderActivity : AppCompatActivity() {
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg",
-                        "高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個 成長突飛猛進1"
+                        "1高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個 成長突飛猛進1"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg",
-                        "高山峰親曝給兒子吃這個 成長突飛猛進2"
+                        "2高山峰親曝給兒子吃這個 成長突飛猛進2"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg",
-                        "高山峰親曝給兒子吃這個 成長突飛猛進3"
+                        "3高山峰親曝給兒子吃這個 成長突飛猛進3"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747955_14884.jpg",
-                        "高山峰親曝給兒子吃這個 成長突飛猛進4"
+                        "4高山峰親曝給兒子吃這個 成長突飛猛進4"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg",
-                        "高山峰親曝給兒子吃這個高山峰親曝給兒5"
+                        "5高山峰親曝給兒子吃這個高山峰親曝給兒5"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg",
-                        "高山峰親曝給兒子吃這個 成長突飛猛進6"
+                        "6高山峰親曝給兒子吃這個 成長突飛猛進6"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg",
-                        "高山峰親曝給兒子吃這個 成長突飛猛進7"
+                        "7高山峰親曝給兒子吃這個 成長突飛猛進7"
                     )
                 )
                 add(
                     ImageSliderObj(
                         "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747955_14884.jpg",
-                        "高山峰親曝給兒子吃這個 成長突飛猛進8"
+                        "8高山峰親曝給兒子吃這個 成長突飛猛進8"
                     )
                 )
 

@@ -11,5 +11,7 @@
     <string name="ratio_16_9">16_9</string>
     <string name="ratio_4_3">4_3</string>
     <string name="ratio_2_1">2_1</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
