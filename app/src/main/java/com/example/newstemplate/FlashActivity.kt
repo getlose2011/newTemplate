@@ -15,17 +15,17 @@ class FlashActivity : AppCompatActivity() {
         binding = ActivityFlashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-       /*
+
         binding.newsListFlashLinearLayout.post{
             val h = binding.newsListFlashLinearLayout.height
 
             binding.breakingArrowLottie.layoutParams.apply {
-                val w = width
-                height = h
-                width = width
+               // val w = width
+                height = (h*0.7).toInt()
+                //width = width
             }
         }
-*/
+
 
 
     }

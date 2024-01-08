@@ -15,21 +15,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_scrollFlags="scroll|enterAlways">
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:background="@color/design_default_color_error">
 
-        <TextView
 
-            android:id="@+id/newsListFlashCaptionTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:scaleX="0.65"
-            android:scaleY="0.65"
-            android:text="34444444"
-            android:textColor="@android:color/black"
-
-            android:textStyle="bold"></TextView>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/breakingArrowLottie"
@@ -55,7 +44,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@android:style/TextAppearance"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:text="333333333333333333333333333"/>
 
     </LinearLayout>
 
