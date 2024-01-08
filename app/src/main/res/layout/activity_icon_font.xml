@@ -10,9 +10,10 @@
         android:id="@+id/iconFontTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/iconFontLyrics"
-        app:ttfName="@string/iconTTfName"
+        android:text="@string/genIconMenu"
+        app:ttfName="@string/genIconTTfName"
         android:textSize="80dp"
+        android:background="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -25,9 +25,12 @@ class MyTextView : AppCompatTextView {
 
         try{
             val ttfName = when(customAttr.getString(R.styleable.CustomFontTextView_ttfName)){
-                resources.getString(R.string.iconTTfName)-> "icon"
+                resources.getString(R.string.genIconTTfName)-> "gene_icon"
                 else->"icon"
             }
+
+            //feedback
+            isClickable = true
 
             //icon font path
             val customFont = Typeface.createFromAsset(context.assets, "font/$ttfName.ttf")

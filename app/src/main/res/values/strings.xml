@@ -1,15 +1,11 @@
 <resources>
     <string name="app_name">NewsTemplate</string>
 
-    <!--icon font-->
-    <string name="iconFontLyrics">\ue92c</string>
-    <string name="iconFontPlay">\ue934</string>
-    <string name="iconFont900">\ue900</string>
-    <string name="iconFont90d">\ue90d</string>
-
-    <string name="iconTTfName">icon</string>
-    <!--logo icon font-->
-    <string name="iconFontLogo">\ue91d</string>
+    <!--Icon-General icon font-->
+    <string name="genIconTTfName">icon</string>
+    <string name="genIconMenu">\ue92d</string>
+    <string name="genIconLogOut">\ue92b</string>
+    <string name="genIconLyrics">\ue92c</string>
 
     <!-- custom view ratio-->
     <string name="ratio_16_9">16_9</string>

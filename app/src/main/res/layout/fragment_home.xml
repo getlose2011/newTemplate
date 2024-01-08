@@ -19,18 +19,17 @@
         android:background="@color/black">
 
         <com.example.newstemplate.component.MyTextView
-            android:id="@+id/iconFontTxt"
+            android:id="@+id/homeMenuTtf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/iconFontLyrics"
+            android:text="@string/genIconMenu"
             android:textSize="22dp"
             android:textColor="@color/white"
-            app:ttfName="@string/iconTTfName"
+            app:ttfName="@string/genIconTTfName"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
             />
-
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/homeTabs"
@@ -39,10 +38,10 @@
             android:background="@color/black"
             android:contentDescription=" "
             app:tabMode="scrollable" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-
-    <androidx.viewpager2.widget.ViewPager2
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/homeViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -54,4 +53,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeLinearLayout"
         app:layout_constraintVertical_bias="1.0" />
+
+    <include layout="@layout/base_progressbar_overlay" android:id="@+id/in_base_progressbar_overlay"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
