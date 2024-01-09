@@ -19,7 +19,6 @@
         android:visibility="gone"
     >
 
-
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/breakingArrowLottie"
             android:layout_gravity="center"

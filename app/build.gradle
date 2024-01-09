@@ -53,7 +53,7 @@ dependencies {
     implementation 'com.nineoldandroids:library:2.4.0'
 
     //计算当前 WindowMetrics 的 WindowMetricsCalculator
-    implementation 'androidx.window:window:1.0.0'
+    //implementation 'androidx.window:window:1.0.0'
 
     //下拉重載
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"

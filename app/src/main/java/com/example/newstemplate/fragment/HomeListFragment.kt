@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -17,6 +19,7 @@ import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.TextSliderView
 import com.daimajia.slider.library.Tricks.ViewPagerEx
+import com.example.newstemplate.BaseFragment
 import com.example.newstemplate.ImageSliderObj
 import com.example.newstemplate.R
 import com.example.newstemplate.databinding.FragmentHomeListBinding
@@ -30,7 +33,7 @@ import kotlinx.coroutines.withContext
 
 
 private const val ARG_PARAM1 = "param1"
-class HomeListFragment : Fragment() {
+class HomeListFragment : BaseFragment() {
     //layout binding
     private val TAG = "HomeListFragment"
     private var job: Job? = null
@@ -44,8 +47,13 @@ class HomeListFragment : Fragment() {
     private lateinit var imageSliderIndicatorLinearLayout2: LinearLayout
     private lateinit var processBar: ProgressBar
     private var sliderImages: ArrayList<ImageSliderObj> = arrayListOf()
-    private lateinit var mBaseFragmentActivity: AppCompatActivity
 
+    private lateinit var newsListFlashLinearLayout: LinearLayout
+    private lateinit var newsListFlashTextView: TextView
+    private val flashObjList : ArrayList<FlashObj> = arrayListOf()
+    //顯示跑馬燈第幾筆資料
+    private var mNewsFlashDataIndex = -1
+    //slider image tag
     private val sliderTag1: String = "sliderTag1"
     private val sliderTag2: String = "sliderTag2"
     //multi
@@ -59,7 +67,7 @@ class HomeListFragment : Fragment() {
     }
     //螢幕寬
     private val w by lazy {
-        Generic.widthPx(mBaseFragmentActivity)
+        Generic.getScreenSize(mBaseFragmentActivity).width
     }
     //image slider 預設首圖位置
     //private var currentIndicatorPosition = 0
@@ -90,28 +98,27 @@ class HomeListFragment : Fragment() {
     ): View? {
         _binding = FragmentHomeListBinding.inflate(inflater, container, false)
         categoryTxt = binding.homeCategoryTxt
-        //SliderLayout高度
+        //progressbar
+        processBar = binding.inBaseProgressbarOverlay.baseLoadingProgressBar
+
+        //SliderLayout,SliderLayout2
         imageSlider = binding.homeListImageSlider.apply {
             layoutParams.height = w / 16 * 9
         }
-        //SliderLayout高度
         imageSlider2 = binding.homeListImageSlider2.apply {
             layoutParams.height = w / 16 * 9
         }
+
+        //indicator,indicator2
         imageSliderIndicatorLinearLayout = binding.homeListIndicatorLinearLayout
         imageSliderIndicatorLinearLayout2 = binding.homeListIndicatorLinearLayout2
-        processBar = binding.inBaseProgressbarOverlay.baseLoadingProgressBar
-        sliderImageObjList.find {
-            it.tag == sliderTag1
-        }?.apply {
-            sliderLayoutId = imageSlider
-            indicateLayoutId = imageSliderIndicatorLinearLayout
-        }
-        sliderImageObjList.find {
-            it.tag == sliderTag2
-        }?.apply {
-            sliderLayoutId = imageSlider2
-            indicateLayoutId = imageSliderIndicatorLinearLayout2
+
+        //flash
+        newsListFlashLinearLayout = binding.homeListFlashLinearLayout
+        newsListFlashTextView = binding.homeListFlashTextView
+        //flash設定動畫高度
+        binding.homeListBreakingArrowLottie.layoutParams.apply {
+            height = (newsListFlashTextView.textSize*1.5).toInt()
         }
         return binding.root
     }
@@ -170,7 +177,18 @@ class HomeListFragment : Fragment() {
         super.onDestroy()
     }
     private fun initComponent() {
-        //imageSlider.addOnPageChangeListener(sliderListener)
+        sliderImageObjList.find {
+            it.tag == sliderTag1
+        }?.apply {
+            sliderLayoutId = imageSlider
+            indicateLayoutId = imageSliderIndicatorLinearLayout
+        }
+        sliderImageObjList.find {
+            it.tag == sliderTag2
+        }?.apply {
+            sliderLayoutId = imageSlider2
+            indicateLayoutId = imageSliderIndicatorLinearLayout2
+        }
         sliderImageObjList.forEach {
             it.listener = listerner(it)
         }
@@ -216,11 +234,7 @@ class HomeListFragment : Fragment() {
                 //設定 image slider indicator
                 changeIndicator(sliderImageObj.indicateLayoutId, sliderImageObj.currentIndicatorPosition)
             }
-
         }
-
-
-
     }
 
     private fun listerner(sliderImageObj:SliderImageObj) = object: ViewPagerEx.OnPageChangeListener{
@@ -310,6 +324,66 @@ class HomeListFragment : Fragment() {
             }
         }
     }
+
+
+    private fun setFlash() {
+        newsListFlashLinearLayout.visibility = View.VISIBLE
+
+        val setCurrentNewsFlashFunc = {
+            mNewsFlashDataIndex = if (mNewsFlashDataIndex == flashObjList.lastIndex) 0 else mNewsFlashDataIndex + 1
+            val model = flashObjList[mNewsFlashDataIndex]
+
+            newsListFlashTextView.apply {
+                text = model.title
+                setOnClickListener {
+                    Toast.makeText(mBaseFragmentActivity, model.title, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        setCurrentNewsFlashFunc()
+
+        //有兩筆(含)以上資料才使用動畫效果
+        if(flashObjList.size > 1){
+            //animation
+            //中間 > 上面
+            val mNewsFlashCenterToTopAnim = AnimationUtils.loadAnimation(mBaseFragmentActivity,
+                R.anim.news_flash_center_to_top_animation)
+
+            //下面 > 中間
+            val mNewsFlashBottomToCenterAnim = AnimationUtils.loadAnimation(mBaseFragmentActivity,
+                R.anim.news_flash_bottom_to_center_animation)
+
+            mNewsFlashCenterToTopAnim.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationRepeat(animation: Animation?) {}
+                override fun onAnimationEnd(animation: Animation?) {
+                    newsListFlashTextView.apply {
+                        startAnimation(mNewsFlashBottomToCenterAnim)
+                        setCurrentNewsFlashFunc()
+                    }
+                }
+
+                override fun onAnimationStart(animation: Animation?) {}
+            })
+
+            mNewsFlashBottomToCenterAnim.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationRepeat(animation: Animation?) {}
+                override fun onAnimationEnd(animation: Animation?) {
+                    newsListFlashTextView.apply {
+                        startAnimation(mNewsFlashCenterToTopAnim)
+                    }
+                }
+
+                override fun onAnimationStart(animation: Animation?) {}
+            })
+
+            //啟動動畫
+            newsListFlashTextView.apply {
+                startAnimation(mNewsFlashCenterToTopAnim)
+            }
+        }
+    }
+
     private fun getData() {
         processBar.visibility = View.VISIBLE
         //取得資料
@@ -333,18 +407,27 @@ class HomeListFragment : Fragment() {
                         clear()
                         addAll(data.sliderImages1)
                     }
+                    //flash
+                    flashObjList.apply {
+                        clear()
+                        addAll(data.flashObjData)
+                    }
                 }
             }
             //main 3
             processBar.visibility = View.GONE
+            //slider image
             setSliderImage()
+            //flash
+            setFlash()
         }
     }
 
-    private suspend fun getDataFromApi(): HomeListObj {
+
+    private suspend fun getDataFromApi(): HomeListModel {
         return withContext(Dispatchers.IO) {
             delay(4000)
-            HomeListObj(true).apply {
+            HomeListModel(true).apply {
                 sliderImages1.apply {
                     add(
                         ImageSliderObj(
@@ -403,15 +486,21 @@ class HomeListFragment : Fragment() {
                         )
                     )
                 }
+                flashObjData.apply {
+                    add(FlashObj(1,"下垂暗沉蠟黃皺紋找上門？不是年齡問題而是「糖化臉」",""))
+                    add(FlashObj(2,"快訊每天喝咖啡有益健康？營養師示警3類人要小心",""))
+                    add(FlashObj(3,"沒船沒飛機！金門人返鄉投票卡關 他1方案比投訴還快","https://news.ebc.net.tw/news/living/399860"))
+                }
             }
         }
     }
 }
-data class HomeListObj(
+data class HomeListModel(
     val success: Boolean,
     val message: String="",
     val sliderImages: ArrayList<ImageSliderObj> = arrayListOf(),
-    val sliderImages1: ArrayList<ImageSliderObj> = arrayListOf()
+    val sliderImages1: ArrayList<ImageSliderObj> = arrayListOf(),
+    val flashObjData : ArrayList<FlashObj> = arrayListOf()
 )
 data class SliderImageObj(
     val tag:String,
@@ -421,3 +510,5 @@ data class SliderImageObj(
     val data: ArrayList<ImageSliderObj> = arrayListOf(),
     var listener: ViewPagerEx.OnPageChangeListener? = null
 )
+
+data class FlashObj(val id:Int, val title:String, val url:String)

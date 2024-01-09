@@ -36,7 +36,7 @@ class ImageSliderActivity : AppCompatActivity() {
     private lateinit var imageSliderIndicatorLinearLayout: LinearLayoutCompat
     //螢幕寬
     private val w by lazy {
-        Generic.widthPx(this@ImageSliderActivity)
+        Generic.getScreenSize(this).width
     }
     //image slider 預設首圖位置
     private var currentIndicatorPosition = 0

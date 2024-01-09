@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(FlashActivity::class.java)
+        clickActivity(HomeActivity::class.java)
 
         //deleteCache(this)
 

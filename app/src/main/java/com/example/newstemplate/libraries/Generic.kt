@@ -1,39 +1,51 @@
 package com.example.newstemplate.libraries
 
-
-import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.view.View
+import android.content.Context
+import android.content.res.Resources
+import android.os.Build
+import android.util.DisplayMetrics
+import android.util.Size
+import android.view.WindowManager
+import android.view.WindowMetrics
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import androidx.window.layout.WindowMetricsCalculator
-import java.time.Duration
+import androidx.annotation.RequiresApi
 
 
 object Generic  {
 
     /**
      *
-     * 取得螢幕寬的PX
+     * width or height pixels
      * */
-    @SuppressLint("SuspiciousIndentation")
-    fun widthPx(activity: Activity):Int
-        {
-            val windowMetrics: androidx.window.layout.WindowMetrics =
-                WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity)
-                return windowMetrics.bounds.width()
-        }
+    private val api: Api =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ApiLevel30()
+        else Api()
 
     /**
-     *
-     * 取得螢幕長的PX
-     * */
-    fun heightPx(activity: Activity):Int
-    {
-        val windowMetrics: androidx.window.layout.WindowMetrics =
-            WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity)
-        return windowMetrics.bounds.height()
+     * Returns screen size in pixels.
+     */
+    fun getScreenSize(context: Context): Size = api.getScreenSize(context)
+
+    @Suppress("DEPRECATION")
+    private open class Api {
+        open fun getScreenSize(context: Context): Size {
+            val display = context.getSystemService(WindowManager::class.java).defaultDisplay
+            val metrics = if (display != null) {
+                DisplayMetrics().also { display.getRealMetrics(it) }
+            } else {
+                Resources.getSystem().displayMetrics
+            }
+            return Size(metrics.widthPixels, metrics.heightPixels)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private class ApiLevel30 : Api() {
+        override fun getScreenSize(context: Context): Size {
+            val metrics: WindowMetrics = context.getSystemService(WindowManager::class.java).currentWindowMetrics
+            return Size(metrics.bounds.width(), metrics.bounds.height())
+        }
     }
 
     fun scaleAnimFun(
