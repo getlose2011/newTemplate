@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.newstemplate.BaseFragment
 import com.example.newstemplate.component.MyTextView
@@ -87,6 +85,7 @@ class HomeFragment : BaseFragment() {
      * */
     private fun updateCategorySort(){
 
+
         tabFragmentPageAdapter.clearFragments()
 
         var data = ArrayList<HomeObj>().apply {
@@ -96,17 +95,19 @@ class HomeFragment : BaseFragment() {
             add(HomeObj("健康",2))
             add(HomeObj("生活",3))
             add(HomeObj("政治",4))
-            add(HomeObj("娛樂",5))
-            add(HomeObj("社會",6))
-            add(HomeObj("國際",7))
         }
         data.forEach {
             tabFragmentPageAdapter.addFragment(HomeListFragment.newInstance(it.category),it.category)
         }
 
-        updateViewPager()
         viewPager.adapter?.notifyDataSetChanged()
-        viewPager.currentItem = 3
+
+
+
+
+
+
+
     }
 
     /**
@@ -152,15 +153,9 @@ class HomeFragment : BaseFragment() {
 
                 add(HomeObj("最新",-1))
                 add(HomeObj("熱門",-2))
-                add(HomeObj("健康",2))
-                add(HomeObj("生活",3))
                 add(HomeObj("政治",4))
-                add(HomeObj("娛樂",5))
-                add(HomeObj("國際",7))
-                add(HomeObj("生活",1))
+                add(HomeObj("生活",3))
                 add(HomeObj("健康",2))
-                add(HomeObj("社會",6))
-
             }
         }
     }
@@ -172,7 +167,7 @@ class HomeFragment : BaseFragment() {
  * TabFragmentPageAdapter adapter
  * */
 class TabFragmentPageAdapter(private val context: Context, fm: androidx.fragment.app.FragmentManager) :
-    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private var fragments: ArrayList<Fragment> = ArrayList()
     private var tabTitles: ArrayList<String> = ArrayList()
@@ -180,11 +175,13 @@ class TabFragmentPageAdapter(private val context: Context, fm: androidx.fragment
     fun addFragment(fragment:Fragment,title:String){
         tabTitles.add(title)
         fragments.add(fragment)
+
     }
 
     fun clearFragments(){
         tabTitles.clear()
         fragments.clear()
+
     }
 
     override fun getItem(position: Int): Fragment {
@@ -199,8 +196,9 @@ class TabFragmentPageAdapter(private val context: Context, fm: androidx.fragment
         return fragments.count()
     }
 
-
-
+    override fun getItemPosition(`object`: Any): Int {
+        return POSITION_NONE
+    }
 }
 
 /**

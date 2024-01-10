@@ -1,4 +1,5 @@
 package com.example.newstemplate.fragment
+
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -14,7 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.fragment.app.Fragment
 import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.TextSliderView
@@ -33,6 +33,7 @@ import kotlinx.coroutines.withContext
 
 
 private const val ARG_PARAM1 = "param1"
+
 class HomeListFragment : BaseFragment() {
     //layout binding
     private val TAG = "HomeListFragment"
@@ -88,7 +89,7 @@ class HomeListFragment : BaseFragment() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+ 		arguments?.let {
             categoryName = "${it.getString(ARG_PARAM1, "")}"
         }
     }
