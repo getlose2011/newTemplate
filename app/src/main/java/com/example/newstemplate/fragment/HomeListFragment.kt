@@ -81,12 +81,7 @@ class HomeListFragment : BaseFragment() {
                 }
             }
     }
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        context.also {
-            mBaseFragmentActivity = it as AppCompatActivity
-        }
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
  		arguments?.let {
@@ -145,8 +140,8 @@ class HomeListFragment : BaseFragment() {
         super.onStart()
         Log.d(TAG, "onStart: $categoryName")
     }
-    override fun onResume() {
 
+    override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: $categoryName")
     }
