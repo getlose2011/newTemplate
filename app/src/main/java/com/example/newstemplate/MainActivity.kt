@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityMainBinding
 import com.example.newstemplate.databinding.RowMainItemBinding
+import com.example.newstemplate.libraries.Generic
 
 interface IMainAdapterListener{
     fun click(activity: Class<*>)
@@ -38,11 +39,12 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(HomeActivity::class.java)
+        clickActivity(CoroutineActivity::class.java)
 
         //deleteCache(this)
 
     }
+
 
     private fun getTaskData(): ArrayList<Tasks> {
 
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("mp3",MediaActivity::class.java))
             add(Tasks("animation", AnimationActivity::class.java))
             add(Tasks("flash", FlashActivity::class.java))
+            add(Tasks("coroutine", CoroutineActivity::class.java))
         }
 
     }
