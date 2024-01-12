@@ -47,7 +47,7 @@ class HomeListFragment : BaseFragment() {
     private lateinit var imageSliderIndicatorLinearLayout: LinearLayout
     private lateinit var imageSliderIndicatorLinearLayout2: LinearLayout
     private lateinit var processBar: ProgressBar
-    private var sliderImages: ArrayList<ImageSliderObj> = arrayListOf()
+    //private var sliderImages: ArrayList<ImageSliderObj> = arrayListOf()
 
     private lateinit var newsListFlashLinearLayout: LinearLayout
     private lateinit var newsListFlashTextView: TextView
@@ -201,7 +201,6 @@ class HomeListFragment : BaseFragment() {
      * 設定image slider
      * */
     private fun setSliderImage() {
-        Log.d(TAG, "setSliderImage: ${sliderImages.count()}")
         addSliderImage()
         setIndicator()
     }
