@@ -84,7 +84,7 @@ class HomeListFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
- 		arguments?.let {
+        arguments?.let {
             categoryName = "${it.getString(ARG_PARAM1, "")}"
         }
     }
@@ -122,22 +122,24 @@ class HomeListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initComponent()
         categoryTxt.text = categoryName
-        if(sliderImages.any()){
+        if(sliderImageObjList[0].data.any()){
             Log.d(TAG, "onViewCreated: any, $categoryName")
-            setSliderImage()
+            imageSlider.post {
+                setSliderImage()
+            }
         }else{
             Log.d(TAG, "onViewCreated: $categoryName")
             getData()
         }
     }
     override fun onStart() {
+        super.onStart()
         sliderImageObjList.forEach {sliderImages->
             sliderImages.sliderLayoutId?.startAutoCycle(3000L, 3000L, true)
             //setCycle()
 
             sliderImages.sliderLayoutId?.addOnPageChangeListener(sliderImages.listener)
         }
-        super.onStart()
         Log.d(TAG, "onStart: $categoryName")
     }
 
@@ -165,8 +167,13 @@ class HomeListFragment : BaseFragment() {
     }
     override fun onDestroyView() {
         Log.d(TAG, "onDestroyView: $categoryName")
-        _binding = null
+
         super.onDestroyView()
+        sliderImageObjList.forEach {
+            it.sliderLayoutId = null
+            it.indicateLayoutId = null
+        }
+        _binding = null
     }
     override fun onDestroy() {
         Log.d(TAG, "onDestroy: $categoryName")
@@ -315,7 +322,7 @@ class HomeListFragment : BaseFragment() {
                     //duration => 每次滑動的時間
                     //autoRecover => false 使用者手指停留在該圖片時，則會停留在該圖片，不會繼續在滑動
 
-                    sliderImages.sliderLayoutId?.startAutoCycle(3000L, 3000L, true)
+                    startAutoCycle(3000L, 3000L, true)
                 }
             }
         }
