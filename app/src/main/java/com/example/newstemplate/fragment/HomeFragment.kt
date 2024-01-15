@@ -13,6 +13,7 @@ import androidx.viewpager.widget.ViewPager
 import com.example.newstemplate.BaseFragment
 import com.example.newstemplate.component.MyTextView
 import com.example.newstemplate.databinding.FragmentHomeBinding
+import com.example.newstemplate.libraries.Generic
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -27,6 +28,8 @@ interface IHomeAdapterListener{
 
 //如果要用 viewpager 2參考下面網址，只其它套件有滑動的可能會有相沖
 //https://www.jianshu.com/p/e95f97865d10
+
+private const val VIEWPAGER_PRE_LOAD_COUNT = 1
 
 class HomeFragment : BaseFragment() {
     private val TAG = "HomeFragment"
@@ -69,12 +72,22 @@ class HomeFragment : BaseFragment() {
     override fun onDestroyView() {
         Log.d(TAG, "onDestroyView: ")
         viewPager.adapter = null
-        _binding = null
         super.onDestroyView()
+        _binding = null
     }
 
     private fun initComponent() {
         tabFragmentPageAdapter = TabFragmentPageAdapter(mBaseFragmentActivity,  childFragmentManager)//requireActivity().supportFragmentManager)//
+
+        viewPager.apply {
+            offscreenPageLimit = VIEWPAGER_PRE_LOAD_COUNT
+            Generic.setViewConnectAdapterOrNotify(this, tabFragmentPageAdapter)
+        }
+
+        tableLayout.apply {
+            setupWithViewPager(viewPager)
+        }
+
         homeMenuTtf.setOnClickListener {
             updateCategorySort()
         }
@@ -84,7 +97,6 @@ class HomeFragment : BaseFragment() {
      * 如果有更新分類排序
      * */
     private fun updateCategorySort(){
-
 
         tabFragmentPageAdapter.clearFragments()
 
@@ -100,14 +112,8 @@ class HomeFragment : BaseFragment() {
             tabFragmentPageAdapter.addFragment(HomeListFragment.newInstance(it.category),it.category)
         }
 
-        viewPager.adapter?.notifyDataSetChanged()
-
-
-
-
-
-
-
+        //set adapter
+        Generic.setViewConnectAdapterOrNotify(viewPager,tabFragmentPageAdapter)
     }
 
     /**
@@ -135,11 +141,8 @@ class HomeFragment : BaseFragment() {
      * */
     private fun updateViewPager(){
         if(isAdded){
-            if(viewPager.adapter != null)viewPager.adapter = null
-            viewPager.adapter = tabFragmentPageAdapter
-            tableLayout.setupWithViewPager(viewPager)
+            Generic.setViewConnectAdapterOrNotify(viewPager,tabFragmentPageAdapter)
         }
-
     }
 
     /**
@@ -175,7 +178,6 @@ class TabFragmentPageAdapter(private val context: Context, fm: androidx.fragment
     fun addFragment(fragment:Fragment,title:String){
         tabTitles.add(title)
         fragments.add(fragment)
-
     }
 
     fun clearFragments(){

@@ -48,6 +48,21 @@ object Generic  {
         }
     }
 
+    /**
+     * 設定 ViewPager 連結 Adapter
+     * 若已有 adapter 則通知資料更新
+     *
+     * @param viewPager ViewPager
+     * @param adapter PagerAdapter
+     */
+    fun setViewConnectAdapterOrNotify(viewPager: androidx.viewpager.widget.ViewPager, adapter: androidx.viewpager.widget.PagerAdapter) {
+        if (viewPager.adapter == null) {
+            viewPager.adapter = adapter
+        } else {
+            adapter.notifyDataSetChanged()
+        }
+    }
+
     fun scaleAnimFun(
         fromScale: Float,
         toScale: Float,
