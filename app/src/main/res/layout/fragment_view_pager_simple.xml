@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.ViewPagerSimpleFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/viewPagerLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center_vertical"
+        android:background="@color/black">
+
+        <com.example.newstemplate.component.MyTextView
+            android:id="@+id/viewPagerMenuTtf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/genIconMenu"
+            android:textSize="22dp"
+            android:textColor="@color/white"
+            app:ttfName="@string/genIconTTfName"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/viewPagerTabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:contentDescription=" "
+            app:tabMode="scrollable" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vPViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:contentDescription=" "
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPagerLinearLayout"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <include layout="@layout/base_progressbar_overlay" android:id="@+id/in_base_progressbar_overlay"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(CoroutineActivity::class.java)
+        clickActivity(ViewPagerSimpleActivity::class.java)
 
         //deleteCache(this)
 
@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("animation", AnimationActivity::class.java))
             add(Tasks("flash", FlashActivity::class.java))
             add(Tasks("coroutine", CoroutineActivity::class.java))
+            add(Tasks("viewpager simple", ViewPagerSimpleActivity::class.java))
         }
 
     }
