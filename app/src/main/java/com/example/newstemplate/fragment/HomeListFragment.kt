@@ -1,6 +1,7 @@
 package com.example.newstemplate.fragment
 
-import android.content.Context
+
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,24 +14,26 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.TextSliderView
 import com.daimajia.slider.library.Tricks.ViewPagerEx
 import com.example.newstemplate.BaseFragment
-import com.example.newstemplate.ImageSliderObj
+import com.example.newstemplate.Model.CoverTopicModel
+import com.example.newstemplate.Model.FlashNewsModel
+import com.example.newstemplate.Model.NewsSliderImageModel
+import com.example.newstemplate.Model.ResponseModel
 import com.example.newstemplate.R
 import com.example.newstemplate.databinding.FragmentHomeListBinding
 import com.example.newstemplate.libraries.Generic
+import com.example.newstemplate.service.HomeListService
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
 
 private const val ARG_PARAM1 = "param1"
 
@@ -42,30 +45,27 @@ class HomeListFragment : BaseFragment() {
     private lateinit var categoryName: String
     private val binding get() = _binding!!
     private lateinit var categoryTxt: TextView
-    private lateinit var imageSlider: SliderLayout
-    private lateinit var imageSlider2: SliderLayout
-    private lateinit var imageSliderIndicatorLinearLayout: LinearLayout
-    private lateinit var imageSliderIndicatorLinearLayout2: LinearLayout
+    private lateinit var newsImageSliderLayout: SliderLayout
+    private lateinit var coverTopicSliderLayout: SliderLayout
+    private lateinit var newsImageIndicatorLinearLayout: LinearLayout
+    private lateinit var coverTopicIndicatorLinearLayout: LinearLayout
+    private lateinit var newsImageListener: ViewPagerEx.OnPageChangeListener
+    private lateinit var coverTopicListener: ViewPagerEx.OnPageChangeListener
     private lateinit var processBar: ProgressBar
-    //private var sliderImages: ArrayList<ImageSliderObj> = arrayListOf()
-
     private lateinit var newsListFlashLinearLayout: LinearLayout
     private lateinit var newsListFlashTextView: TextView
-    private val flashObjList : ArrayList<FlashObj> = arrayListOf()
+    //news image slider data
+    private var newsSliderImageList = arrayListOf<NewsSliderImageModel>()
+    private var mSliderImageIndex = 0
+    //cover topic
+    private var coverTopicList : ArrayList<CoverTopicModel> = arrayListOf()
+    private var mCoverTopicIndex = 0
+    //flash news data
+    private var flashNewsList : ArrayList<FlashNewsModel> = arrayListOf()
     //顯示跑馬燈第幾筆資料
     private var mNewsFlashDataIndex = -1
-    //slider image tag
-    private val sliderTag1: String = "sliderTag1"
-    private val sliderTag2: String = "sliderTag2"
-    //multi
-    private val sliderImageObjList = arrayListOf<SliderImageObj>().apply {
-        add(
-            SliderImageObj(sliderTag1)
-        )
-        add(
-            SliderImageObj(sliderTag2)
-        )
-    }
+
+
     //螢幕寬
     private val w by lazy {
         Generic.getScreenSize(mBaseFragmentActivity).width
@@ -87,7 +87,9 @@ class HomeListFragment : BaseFragment() {
         arguments?.let {
             categoryName = "${it.getString(ARG_PARAM1, "")}"
         }
+        Log.d(TAG, "onCreated: any, $categoryName")
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -98,16 +100,16 @@ class HomeListFragment : BaseFragment() {
         processBar = binding.inBaseProgressbarOverlay.baseLoadingProgressBar
 
         //SliderLayout,SliderLayout2
-        imageSlider = binding.homeListImageSlider.apply {
+        newsImageSliderLayout = binding.homeListImageSlider.apply {
             layoutParams.height = w / 16 * 9
         }
-        imageSlider2 = binding.homeListImageSlider2.apply {
+        coverTopicSliderLayout = binding.homeListImageSlider2.apply {
             layoutParams.height = w / 16 * 9
         }
 
         //indicator,indicator2
-        imageSliderIndicatorLinearLayout = binding.homeListIndicatorLinearLayout
-        imageSliderIndicatorLinearLayout2 = binding.homeListIndicatorLinearLayout2
+        newsImageIndicatorLinearLayout = binding.homeListIndicatorLinearLayout
+        coverTopicIndicatorLinearLayout = binding.homeListIndicatorLinearLayout2
 
         //flash
         newsListFlashLinearLayout = binding.homeListFlashLinearLayout
@@ -122,25 +124,16 @@ class HomeListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initComponent()
         categoryTxt.text = categoryName
-        if(sliderImageObjList[0].data.any()){
-            Log.d(TAG, "onViewCreated: any, $categoryName")
-            imageSlider.post {
-                setSliderImage()
-            }
-        }else{
-            Log.d(TAG, "onViewCreated: $categoryName")
-            getData()
-        }
+        getData()
     }
     override fun onStart() {
         super.onStart()
-        sliderImageObjList.forEach {sliderImages->
-            sliderImages.sliderLayoutId?.startAutoCycle(3000L, 3000L, true)
-            //setCycle()
-
-            sliderImages.sliderLayoutId?.addOnPageChangeListener(sliderImages.listener)
-        }
-        Log.d(TAG, "onStart: $categoryName")
+        //start
+        newsImageSliderLayout.startAutoCycle(3000L, 3000L, true)
+        coverTopicSliderLayout.startAutoCycle(3000L, 3000L, true)
+        //listener
+        newsImageSliderLayout.addOnPageChangeListener(newsImageListener)
+        coverTopicSliderLayout.addOnPageChangeListener(coverTopicListener)
     }
 
     override fun onResume() {
@@ -150,17 +143,17 @@ class HomeListFragment : BaseFragment() {
 
     override fun onPause() {
 
-
         super.onPause()
         Log.d(TAG, "onPause: $categoryName")
     }
 
-
     override fun onStop() {
-        sliderImageObjList.forEach {sliderImages->
-            sliderImages.sliderLayoutId?.stopAutoCycle()
-            sliderImages.sliderLayoutId?.removeOnPageChangeListener(sliderImages.listener)
-        }
+        //stop
+        newsImageSliderLayout.stopAutoCycle()
+        coverTopicSliderLayout.stopAutoCycle()
+        //listener
+        newsImageSliderLayout.removeOnPageChangeListener(newsImageListener)
+        coverTopicSliderLayout.removeOnPageChangeListener(coverTopicListener)
         //job?.cancel()
         super.onStop()
         Log.d(TAG, "onStop: $categoryName")
@@ -169,10 +162,7 @@ class HomeListFragment : BaseFragment() {
         Log.d(TAG, "onDestroyView: $categoryName")
 
         super.onDestroyView()
-        sliderImageObjList.forEach {
-            it.sliderLayoutId = null
-            it.indicateLayoutId = null
-        }
+
         _binding = null
     }
     override fun onDestroy() {
@@ -180,66 +170,66 @@ class HomeListFragment : BaseFragment() {
         super.onDestroy()
     }
     private fun initComponent() {
-        sliderImageObjList.find {
-            it.tag == sliderTag1
-        }?.apply {
-            sliderLayoutId = imageSlider
-            indicateLayoutId = imageSliderIndicatorLinearLayout
-        }
-        sliderImageObjList.find {
-            it.tag == sliderTag2
-        }?.apply {
-            sliderLayoutId = imageSlider2
-            indicateLayoutId = imageSliderIndicatorLinearLayout2
-        }
-        sliderImageObjList.forEach {
-            it.listener = listerner(it)
-        }
+        //設定listner
+        newsImageListener = setSliderLayoutListener(SliderImageEnum.News)
+        coverTopicListener = setSliderLayoutListener(SliderImageEnum.CoverTopic)
     }
     /**
      *
-     * 設定image slider
+     * 設定輪播新聞
      * */
-    private fun setSliderImage() {
-        addSliderImage()
-        setIndicator()
-    }
-    private fun setIndicator() {
+    private fun setNewsSliderImage() {
+        if(newsSliderImageList.any()){
+            mSliderImageIndex = 1
 
-        sliderImageObjList.forEach {sliderImageObj ->
-            val count = sliderImageObj.data.count()
-            if(count < 2) {
-                sliderImageObj.indicateLayoutId?.visibility = View.GONE
-            }else{
-                sliderImageObj.indicateLayoutId?.removeAllViews()
+            newsImageIndicatorLinearLayout.visibility = View.VISIBLE
 
-                sliderImageObj.indicateLayoutId?.visibility = View.VISIBLE
-                val indicateWidth = (w - 350)/count
-                (0 until count).forEach { i ->
-                    var image = ImageView(mBaseFragmentActivity)
-                    image.setBackgroundResource(R.drawable.unselected)
-                    //如果要加下面那行，比重一樣所以寬有設跟沒設一樣，imageSliderIndicatorLinearLayout 會滿版
-                    //layoutParams.weight = 1f
-                    // Set layout parameters
-                    val layoutParams = LinearLayoutCompat.LayoutParams(
-                        indicateWidth,
-                        8
-                    )
-                    //第一個左邊不設left margin
-                    if(i != 0)layoutParams.leftMargin = 10
-                    //a.方法
-                    //image.layoutParams = layoutParams
-                    //imageSliderIndicatorLinearLayout.addView(image)
-                    //b.方法
-                    sliderImageObj.indicateLayoutId?.addView(image,layoutParams)
+            setSliderLayout(newsImageSliderLayout){
+
+                newsSliderImageList.forEach {
+                    val textSliderView = setTextSliderView(it.title,it.imageUrl,ClickState.ShowText(it.title))
+                    newsImageSliderLayout.addSlider(textSliderView)
                 }
-                //設定 image slider indicator
-                changeIndicator(sliderImageObj.indicateLayoutId, sliderImageObj.currentIndicatorPosition)
+
+                setSliderLayoutCurrentPosition(newsImageSliderLayout,newsSliderImageList.size-(newsSliderImageList.size-mSliderImageIndex) - 1)
+
             }
+
+            //indicator
+            setIndicator(newsImageIndicatorLinearLayout,newsSliderImageList.count(),mSliderImageIndex)
         }
     }
 
-    private fun listerner(sliderImageObj:SliderImageObj) = object: ViewPagerEx.OnPageChangeListener{
+    /**
+     *
+     * 設定精選主題
+     * */
+    private fun setCoverTopicImage() {
+        if(coverTopicList.any()){
+
+            mCoverTopicIndex = 1
+
+            coverTopicSliderLayout.visibility = View.VISIBLE
+            coverTopicIndicatorLinearLayout.visibility = View.VISIBLE
+
+            setSliderLayout(coverTopicSliderLayout){
+
+                coverTopicList.forEach {
+                    val textSliderView = setTextSliderView(it.title,it.imageUrl,ClickState.ShowText(it.title))
+                    coverTopicSliderLayout.addSlider(textSliderView)
+                }
+
+                setSliderLayoutCurrentPosition(coverTopicSliderLayout,newsSliderImageList.size-(newsSliderImageList.size-mCoverTopicIndex)-1)
+
+            }
+
+            //indicator
+            setIndicator(coverTopicIndicatorLinearLayout, coverTopicList.count(),mCoverTopicIndex)
+
+        }
+    }
+
+    private fun setSliderLayoutListener(si: SliderImageEnum) = object: ViewPagerEx.OnPageChangeListener{
 
         override fun onPageScrolled(
             position: Int,
@@ -249,96 +239,142 @@ class HomeListFragment : BaseFragment() {
             //TODO("Not yet implemented")
         }
         override fun onPageSelected(position: Int) {
-            Log.d(TAG, "onPageSelected: $position, $categoryName , ${sliderImageObj.tag}")
-            changeIndicator(sliderImageObj.indicateLayoutId, position, sliderImageObj.currentIndicatorPosition)
-            sliderImageObj.currentIndicatorPosition = position
+
+            if(si == SliderImageEnum.News){
+                Log.d(TAG, "onPageSelected: $categoryName $si $position $mSliderImageIndex s")
+                setActiveIndicator(newsImageIndicatorLinearLayout, position, mSliderImageIndex)
+                mSliderImageIndex = position
+            }else if(si == SliderImageEnum.CoverTopic){
+                Log.d(TAG, "onPageSelected: $categoryName $si $position $mCoverTopicIndex c")
+                setActiveIndicator(coverTopicIndicatorLinearLayout, position, mCoverTopicIndex)
+                mCoverTopicIndex = position
+            }
         }
         override fun onPageScrollStateChanged(state: Int) {
             //TODO("Not yet implemented")
         }
     }
 
+    private fun setSliderLayout(sliderLayout: SliderLayout,callback:()->Unit) {
+        //先停止
+        sliderLayout.stopAutoCycle()
+        sliderLayout.removeAllSliders()
+        callback()
+    }
+
+
+    private fun setTextSliderView(title: String, imageUrl: String, clickSt: ClickState): TextSliderView {
+        val sliderView = TextSliderView(mBaseFragmentActivity).apply {
+            //文字
+            description(title)
+            //圖片的比例類型。
+            scaleType = BaseSliderView.ScaleType.Fit
+            //點選圖片事件
+            setOnSliderClickListener {
+                clickOp(clickSt)
+            }
+
+        }
+
+        //圖片及預設圖片
+        if (imageUrl.isNotBlank())
+            sliderView.image(imageUrl).empty(R.mipmap.image_default)
+        else
+            sliderView.image(R.mipmap.image_default)
+
+        return sliderView
+    }
+
+    private fun setSliderLayoutCurrentPosition(sliderLayout: SliderLayout, position:Int) {
+
+
+        sliderLayout.apply {
+            //currentPosition = 1
+            //每次重載都從第一筆開始顯示
+            Log.d(TAG, "addSliderImage: $currentPosition $position $categoryName")
+
+            if (currentPosition > 0) {
+                setCurrentPosition(position , true)
+                moveNextPosition()
+            } else
+                setCurrentPosition(0, true)
+
+            //開始的圖片位置
+
+            //delay => 第一次執行滑動時間
+            //duration => 每次滑動的時間
+            //autoRecover => false 使用者手指停留在該圖片時，則會停留在該圖片，不會繼續在滑動
+
+            startAutoCycle(3000L, 3000L, true)
+        }
+    }
+
+    /**
+     *
+     * 設定image slider
+     * */
+    private fun setIndicator(indicatorLayout: LinearLayout, count:Int, currentIndicatorPosition:Int) {
+
+            if(count < 2) {
+                indicatorLayout.visibility = View.GONE
+            }else{
+                indicatorLayout.removeAllViews()
+
+                //indicatorLayout.visibility = View.VISIBLE
+                val indicatorWidth = (w - 350)/count
+                (0 until count).forEach { i ->
+                    var image = ImageView(mBaseFragmentActivity)
+                    image.setBackgroundResource(R.drawable.unselected)
+                    //如果要加下面那行，比重一樣所以寬有設跟沒設一樣，imageSliderIndicatorLinearLayout 會滿版
+                    //layoutParams.weight = 1f
+                    // Set layout parameters
+                    val layoutParams = LinearLayoutCompat.LayoutParams(
+                        indicatorWidth,
+                        8
+                    )
+                    //第一個左邊不設left margin
+                    if(i != 0)layoutParams.leftMargin = 10
+                    //a.方法
+                    //image.layoutParams = layoutParams
+                    //imageSliderIndicatorLinearLayout.addView(image)
+                    //b.方法
+                    indicatorLayout.addView(image,layoutParams)
+                }
+                //設定 image slider indicator
+                setActiveIndicator(indicatorLayout, currentIndicatorPosition)
+            }
+
+    }
+
     /**
      *
      * 改變image slider indicator 圖示
      * */
-    private fun changeIndicator(imageSliderIndicatorLinearLayout:LinearLayout?, currentIndicate:Int, beforeIndicate:Int = -1){
-        imageSliderIndicatorLinearLayout?.let {
+    private fun setActiveIndicator(indicatorLayout:LinearLayout, currentIndicate:Int, beforeIndicate:Int = -1){
+        indicatorLayout.let {
             if(it.childCount > 0){
                 it.getChildAt(currentIndicate).setBackgroundResource(R.drawable.selected)
                 if(beforeIndicate != -1)it.getChildAt(beforeIndicate).setBackgroundResource(R.drawable.unselected)
             }
         }
     }
+
+
     /**
-     * 圖片加載到SliderLayout
-     *
+     * 設定快訊
      * */
-    private fun addSliderImage() {
-        //圖片加載到imageSlider
-        sliderImageObjList.forEach {sliderImages->
-            if(sliderImages.data.any()){
-                //先停止
-                sliderImages.sliderLayoutId?.stopAutoCycle()
-                sliderImages.sliderLayoutId?.removeAllSliders()
-                sliderImages.data.forEach { imageSliderObj ->
-                    //slider object
-                    val sliderView = TextSliderView(mBaseFragmentActivity).apply {
-                        //文字
-                        description(imageSliderObj.title)
-                        //圖片的比例類型。
-                        scaleType = BaseSliderView.ScaleType.Fit
-                        //點選圖片事件
-                        setOnSliderClickListener {
-                            Toast.makeText(
-                                mBaseFragmentActivity, imageSliderObj.title,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
-                    }
-
-                    //圖片及預設圖片
-                    if (!imageSliderObj.imageUrl.isNullOrBlank())
-                        sliderView.image(imageSliderObj.imageUrl).empty(R.mipmap.image_default)
-                    else
-                        sliderView.image(R.mipmap.image_default)
-
-                    sliderImages.sliderLayoutId?.addSlider(sliderView)
-                }
-
-                sliderImages.sliderLayoutId?.apply {
-                    //每次重載都從第一筆開始顯示
-                    if (currentPosition > 0) {
-                        setCurrentPosition(sliderImages.data.size - 1, true)
-                        moveNextPosition()
-                    } else
-                        setCurrentPosition(0, true)
-
-                    //開始的圖片位置
-
-                    //delay => 第一次執行滑動時間
-                    //duration => 每次滑動的時間
-                    //autoRecover => false 使用者手指停留在該圖片時，則會停留在該圖片，不會繼續在滑動
-
-                    startAutoCycle(3000L, 3000L, true)
-                }
-            }
-        }
-    }
-
-
-    private fun setFlash() {
+    private fun setNewsFlash() {
         newsListFlashLinearLayout.visibility = View.VISIBLE
 
         val setCurrentNewsFlashFunc = {
-            mNewsFlashDataIndex = if (mNewsFlashDataIndex == flashObjList.lastIndex) 0 else mNewsFlashDataIndex + 1
-            val model = flashObjList[mNewsFlashDataIndex]
+            mNewsFlashDataIndex = if (mNewsFlashDataIndex == flashNewsList.lastIndex) 0 else mNewsFlashDataIndex + 1
+            val model = flashNewsList[mNewsFlashDataIndex]
 
             newsListFlashTextView.apply {
                 text = model.title
                 setOnClickListener {
-                    Toast.makeText(mBaseFragmentActivity, model.title, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(mBaseFragmentActivity, model.title, Toast.LENGTH_LONG).show()
+                    clickOp(ClickState.OpenWeb("https://news.ebc.net.tw"))
                 }
             }
         }
@@ -346,7 +382,7 @@ class HomeListFragment : BaseFragment() {
         setCurrentNewsFlashFunc()
 
         //有兩筆(含)以上資料才使用動畫效果
-        if(flashObjList.size > 1){
+        if(flashNewsList.size > 1){
             //animation
             //中間 > 上面
             val mNewsFlashCenterToTopAnim = AnimationUtils.loadAnimation(mBaseFragmentActivity,
@@ -386,131 +422,100 @@ class HomeListFragment : BaseFragment() {
         }
     }
 
-    private fun getData() {
-        processBar.visibility = View.VISIBLE
-        //取得資料
+
+    /**
+     * 取得全部資料
+     * */
+    private fun getData(){
         job = GlobalScope.launch(Dispatchers.Main) {
-            //main 1
+
+            // main
+            Log.d(TAG, "getdata4_1")
             processBar.visibility = View.VISIBLE
-            withContext(Dispatchers.IO){
-                // not ui thread 2
-                var data = getDataFromApi()
-                if(data.success){
-                    //slider image
-                    sliderImageObjList.find {
-                        it.tag == sliderTag1
-                    }?.data?.apply{
-                        clear()
-                        addAll(data.sliderImages)
-                    }
-                    sliderImageObjList.find {
-                        it.tag == sliderTag2
-                    }?.data?.apply{
-                        clear()
-                        addAll(data.sliderImages1)
-                    }
-                    //flash
-                    flashObjList.apply {
-                        clear()
-                        addAll(data.flashObjData)
-                    }
-                }
+
+            val newsSliderImageResponseModel: Deferred<ResponseModel<ArrayList<NewsSliderImageModel>>> = GlobalScope.async(Dispatchers.IO) {
+                //not ui
+                HomeListService().getNewsSliderImageApi()
             }
-            //main 3
+
+            val flashNewsResponseModel: Deferred<ResponseModel<ArrayList<FlashNewsModel>>> = GlobalScope.async(Dispatchers.IO) {
+                //not ui
+                HomeListService().getFlashNewsApi()
+            }
+
+            val coverTopicResponseModel: Deferred<ResponseModel<ArrayList<CoverTopicModel>>> = GlobalScope.async(Dispatchers.IO) {
+                //not ui
+                HomeListService().getCoverTopicApi()
+            }
+
+            //main
+            val newsSliderImageResult = newsSliderImageResponseModel.await()
+            val flashNewsResult = flashNewsResponseModel.await()
+            val coverTopicResult = coverTopicResponseModel.await()
+
+            //輪播新聞
+            if(newsSliderImageResult.success){
+                newsSliderImageList.apply {
+                    clear()
+                    newsSliderImageResult.data?.let { addAll(it) }
+                }
+                setNewsSliderImage()
+            }else{
+
+            }
+
+            //快訊新聞
+            if(flashNewsResult.success){
+                flashNewsList.apply {
+                    clear()
+                    flashNewsResult.data?.let { addAll(it) }
+                }
+                setNewsFlash()
+            }else{
+
+            }
+
+            //精選主題
+            if(coverTopicResult.success){
+                coverTopicList.apply {
+                    clear()
+                    coverTopicResult.data?.let { addAll(it) }
+                }
+                setCoverTopicImage()
+            }else{
+
+            }
             processBar.visibility = View.GONE
-            //slider image
-            setSliderImage()
-            //flash
-            setFlash()
         }
     }
 
 
-    private suspend fun getDataFromApi(): HomeListModel {
-        return withContext(Dispatchers.IO) {
-            delay(4000)
-            HomeListModel(true).apply {
-                sliderImages1.apply {
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2024/01/05/1704472623_55845.jpg",
-                            "4疑收中方資金參選立委！ 前民眾黨桃園黨部發言人馬治薇遭聲押"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2024/01/05/1704474375_79604.jpg",
-                            "5張誌家猝逝「2前妻靈前陪伴」 哥曝改名內幕"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2024/01/05/1704474798_62173.jpg",
-                            "6未接種XBB！羅一鈞：保護力恐歸零 1族群更要注意"
-                        )
-                    )
-                }
-                sliderImages.apply {
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698748147_66456.jpg",
-                            "1高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個高山峰親曝給兒子吃這個 成長突飛猛進1"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747935_57304.jpg",
-                            "2高山峰親曝給兒子吃這個 成長突飛猛進2"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2023/10/31/1698747945_53957.jpg",
-                            "3高山峰親曝給兒子吃這個 成長突飛猛進3"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2024/01/05/1704472623_55845.jpg",
-                            "4疑收中方資金參選立委！ 前民眾黨桃園黨部發言人馬治薇遭聲押"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2024/01/05/1704474375_79604.jpg",
-                            "5張誌家猝逝「2前妻靈前陪伴」 哥曝改名內幕"
-                        )
-                    )
-                    add(
-                        ImageSliderObj(
-                            "https://img.news.ebc.net.tw/EbcNews/news/2024/01/05/1704474798_62173.jpg",
-                            "6未接種XBB！羅一鈞：保護力恐歸零 1族群更要注意"
-                        )
-                    )
-                }
-                flashObjData.apply {
-                    add(FlashObj(1,"下垂暗沉蠟黃皺紋找上門？不是年齡問題而是「糖化臉」",""))
-                    add(FlashObj(2,"快訊每天喝咖啡有益健康？營養師示警3類人要小心",""))
-                    add(FlashObj(3,"沒船沒飛機！金門人返鄉投票卡關 他1方案比投訴還快","https://news.ebc.net.tw/news/living/399860"))
-                }
+
+    /**
+     *
+     * 操作按了click事件
+     * **/
+    private fun clickOp(click:ClickState){
+        when(click){
+            is ClickState.OpenWeb->{
+                Toast.makeText(mBaseFragmentActivity,click.url,Toast.LENGTH_LONG).show()
+            }
+            is ClickState.ShowText->{
+                Toast.makeText(mBaseFragmentActivity,click.txt,Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    enum class SliderImageEnum {
+        News,CoverTopic
     }
 }
-data class HomeListModel(
-    val success: Boolean,
-    val message: String="",
-    val sliderImages: ArrayList<ImageSliderObj> = arrayListOf(),
-    val sliderImages1: ArrayList<ImageSliderObj> = arrayListOf(),
-    val flashObjData : ArrayList<FlashObj> = arrayListOf()
-)
-data class SliderImageObj(
-    val tag:String,
-    var sliderLayoutId:SliderLayout? = null,
-    var indicateLayoutId:LinearLayout? = null,
-    var currentIndicatorPosition: Int=0,
-    val data: ArrayList<ImageSliderObj> = arrayListOf(),
-    var listener: ViewPagerEx.OnPageChangeListener? = null
-)
 
-data class FlashObj(val id:Int, val title:String, val url:String)
+
+
+sealed class ClickState {
+    // data class
+    data class ShowText(val txt: String): ClickState()
+    data class OpenWeb(val url: String): ClickState()
+
+}

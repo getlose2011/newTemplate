@@ -63,6 +63,9 @@ object Generic  {
         }
     }
 
+    val random1000To4000:Long = (1000..4000).random().toLong()
+    val trueOrFalse:Boolean = (1..10).random()%2==0
+
     fun scaleAnimFun(
         fromScale: Float,
         toScale: Float,

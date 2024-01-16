@@ -14,6 +14,7 @@ import com.example.newstemplate.BaseFragment
 import com.example.newstemplate.component.MyTextView
 import com.example.newstemplate.databinding.FragmentHomeBinding
 import com.example.newstemplate.libraries.Generic
+import com.example.newstemplate.service.HomeService
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -122,11 +123,17 @@ class HomeFragment : BaseFragment() {
     private fun getCategoryData(){
         processBar.visibility = View.VISIBLE
         //取得資料
-        GlobalScope.launch{
-            var data = getCategoryDataFromApi()
+        GlobalScope.launch(Dispatchers.IO){
+            var result = HomeService().getCategoryDataFromApi()//getCategoryDataFromApi()
 
-            data.forEach {
-                tabFragmentPageAdapter.addFragment(HomeListFragment.newInstance(it.category),it.category)
+
+            
+            if(result.success){
+                Log.d(TAG, "getCategoryData: ${result.data}")
+                result.data?.forEach {
+
+                    tabFragmentPageAdapter.addFragment(HomeListFragment.newInstance(it.category),it.category)
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -142,24 +149,6 @@ class HomeFragment : BaseFragment() {
     private fun updateViewPager(){
         if(isAdded){
             Generic.setViewConnectAdapterOrNotify(viewPager,tabFragmentPageAdapter)
-        }
-    }
-
-    /**
-     * 分類資料api
-     * */
-    private suspend fun getCategoryDataFromApi(): ArrayList<HomeObj>   {
-        //取得資料
-        return  withContext(Dispatchers.IO) {
-            delay(2000)
-            ArrayList<HomeObj>().apply {
-
-                add(HomeObj("最新",-1))
-                add(HomeObj("熱門",-2))
-                add(HomeObj("政治",4))
-                add(HomeObj("生活",3))
-                add(HomeObj("健康",2))
-            }
         }
     }
 
