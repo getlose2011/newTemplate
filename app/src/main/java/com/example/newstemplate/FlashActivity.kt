@@ -40,7 +40,7 @@ class FlashActivity : AppCompatActivity() {
 
     override fun onStop() {
         mNewsFlashDataIndex = -1
-        newsListFlashTextView.clearAnimation()
+     //   newsListFlashTextView.clearAnimation()
         super.onStop()
     }
 
@@ -131,6 +131,24 @@ class FlashActivity : AppCompatActivity() {
             //main step 1
 
             withContext(Dispatchers.IO) {
+                // not ui thread step 2
+                var data = getDataFromApi()
+                flashObjList.apply {
+                    clear()
+                    addAll(data)
+                }
+            }
+
+            //main step 3
+            if(flashObjList.any())setNewsFlash()
+        }
+
+
+        GlobalScope.launch(Dispatchers.Main) {
+            //main step 1
+
+            withContext(Dispatchers.IO) {
+                delay(13000)
                 // not ui thread step 2
                 var data = getDataFromApi()
                 flashObjList.apply {

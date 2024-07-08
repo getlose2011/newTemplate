@@ -1,0 +1,12 @@
+<!--以下是@drawable/bg_bottom_sheet-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp">
+    </corners>
+    <solid android:color="?attr/bottomDialogBackground"/>
+    <padding android:top="8dp"
+        android:left="8dp"
+        android:right="8dp" />
+</shape>

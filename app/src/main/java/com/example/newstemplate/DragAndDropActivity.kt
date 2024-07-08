@@ -4,6 +4,7 @@ package com.example.newstemplate
 import android.R
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityDragAndDropBinding
 import com.example.newstemplate.databinding.RowDragItemBinding
+import com.example.newstemplate.libraries.Generic
 
 
 //https://stackoverflow.com/questions/51201482/android-percent-screen-width-in-recyclerview-item
@@ -43,12 +45,14 @@ class DragAndDropActivity : AppCompatActivity() {
 
         data = getData()
 
-        dAdapter = DragAndDropAdapter(data)
+       dAdapter = DragAndDropAdapter(data)
 
         binding.dragRecyclerView.apply {
             adapter = dAdapter
             dAdapter.setColumNum(getColumNum())
         }
+
+        Generic.setViewConnectAdapterOrNotify(binding.dragRecyclerView,dAdapter)
 
     }
 
@@ -65,6 +69,10 @@ class DragAndDropActivity : AppCompatActivity() {
         }
 
         dAdapter.setDrag(isEdit)
+
+        dAdapter.getData().forEach {
+            Log.d(TAG, "checkDragFun: ${it.cn}")
+        }
     }
 
     private val itemTouchHelper = ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(
@@ -152,6 +160,10 @@ open class DragAndDropAdapter(private var data: ArrayList<Category>) : RecyclerV
     private var checkEdit = false
     private var sCount = 0
 
+    fun getData(): ArrayList<Category>{
+        return data
+    }
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         //取得recycler view width
         val recyclerViewWidth = (parent as RecyclerView).width

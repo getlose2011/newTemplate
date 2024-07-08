@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:gravity="bottom|left">
+    <item
+        android:top="5dp"
+        android:gravity="bottom|left">
         <shape>
-            <size android:height="4dp" />
+            <size android:height="3dp" />
             <solid android:color="#FBC02D" />
         </shape>
     </item>

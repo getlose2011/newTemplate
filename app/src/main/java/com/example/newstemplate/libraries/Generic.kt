@@ -1,15 +1,24 @@
 package com.example.newstemplate.libraries
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Size
 import android.view.WindowManager
 import android.view.WindowMetrics
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
+import android.webkit.CookieManager
+import android.webkit.WebSettings
+import android.webkit.WebView
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 
 object Generic  {
@@ -81,5 +90,68 @@ object Generic  {
         ).apply {
                 setDuration(duration)
         }
+
+    /**
+     * 設定 RecyclerView 連結 Adapter
+     * 若已有 adapter 則通知資料更新
+     *
+     * @param recyclerView RecyclerView
+     * @param adapter RecyclerView.Adapter<*>
+     */
+    fun setViewConnectAdapterOrNotify(recyclerView: androidx.recyclerview.widget.RecyclerView, adapter: androidx.recyclerview.widget.RecyclerView.Adapter<*>) {
+        if (recyclerView.adapter == null) {
+            recyclerView.adapter = adapter
+        } else {
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+     fun requestCallback(resultCallback: ((isSuccess: Boolean, errMessage: String?) -> Unit)? = null) {
+         // Simulating some async operation
+         Handler(Looper.getMainLooper()).postDelayed({
+             // Example callback usage:
+             resultCallback?.invoke(true, "Success")
+         }, 10000)
+    }
+
+
+    /**
+     * 設定 WebView 與 ProgressBar 預設設定
+     *
+     * @param webView          WebView 元件
+     */
+    @SuppressLint("SetJavaScriptEnabled")
+    fun setWebViewDefaultConfig(webView: WebView) {
+
+        webView.apply {
+            //webView 在 nestedScrollView 內開啟此功能會出錯
+            //api19 以上開啟 Chromium 硬體加速功能
+            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            //setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+            settings.apply {
+                useWideViewPort = true     //開啟 Html Meta 功能
+                loadWithOverviewMode = true        //自動適應裝置螢幕大小
+                javaScriptEnabled = true       //啟用 Javascript 支援
+                javaScriptCanOpenWindowsAutomatically = true     //啟用 Javascript 可開啟視窗支援
+                //setAppCacheEnabled(true)      //開啟 Application H5 Caches 功能
+                cacheMode = WebSettings.LOAD_NO_CACHE      //強制不從快取讀取資料
+                builtInZoomControls = true       //開啟內部縮放功能
+                displayZoomControls = false      //關閉系統縮放控制項
+                domStorageEnabled = true        //開啟數據儲存(LocalStorage)
+                loadsImagesAutomatically = true     //自動加載圖片
+                javaScriptCanOpenWindowsAutomatically = true
+                setSupportMultipleWindows(true)
+            }
+
+            //allow cookie access
+            CookieManager.getInstance().setAcceptCookie(true)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW      //允許網頁內容混和模式
+                CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)      //允許第三方存取 cookie
+            }
+        }
+    }
 
 }

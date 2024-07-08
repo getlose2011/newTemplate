@@ -2,17 +2,17 @@ package com.example.newstemplate
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityMainBinding
 import com.example.newstemplate.databinding.RowMainItemBinding
-import com.example.newstemplate.libraries.Generic
+
 
 interface IMainAdapterListener{
     fun click(activity: Class<*>)
@@ -31,7 +31,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
+
         var data = getTaskData()
         
         var adapter  = MainAdapter(data, callback)
@@ -39,7 +40,8 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(HomeActivity::class.java)
+        clickActivity(WebViewActivity::class.java)
+        //clickActivity(RecyclerMultiActivity::class.java)
 
         //deleteCache(this)
 
@@ -61,6 +63,10 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("flash", FlashActivity::class.java))
             add(Tasks("coroutine", CoroutineActivity::class.java))
             add(Tasks("viewpager simple", ViewPagerSimpleActivity::class.java))
+            add(Tasks("viewpager 2", ViewPager2Activity::class.java))
+            add(Tasks("test lambda memory leak", LambdaLeakTestActivity::class.java))
+            add(Tasks("play audio service", PlayAudioActivity::class.java))
+            add(Tasks("webview", WebViewActivity::class.java))
         }
 
     }
@@ -81,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 class MainAdapter(val tasks: List<Tasks>,private val listener:IMainAdapterListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val mBoundViewHolders = HashSet<MainItemViewHolder>()
     val VIEW_TYPE_ITEM = 0
     val VIEW_TYPE_LOADING = 1
     val TAG = "MainAdapter"
@@ -88,14 +95,20 @@ class MainAdapter(val tasks: List<Tasks>,private val listener:IMainAdapterListen
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == VIEW_TYPE_ITEM) {
             val binding = RowMainItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-            return MainItemViewHolder(binding)
+            val holder = MainItemViewHolder(binding)
+            mBoundViewHolders.add(holder)
+            return holder
         }
         else{
             val view = LayoutInflater.from(parent.context).inflate(R.layout.row_item_dialog, parent, false)
             return LoadingViewHolder(view)
         }
+    }
 
-
+    fun update(){
+        mBoundViewHolders.forEach {
+            it.setText("33333333333")
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

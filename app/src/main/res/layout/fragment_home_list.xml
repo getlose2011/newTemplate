@@ -87,7 +87,6 @@
 
                 </LinearLayout>
 
-
                 <com.daimajia.slider.library.SliderLayout
                     android:id="@+id/homeListImageSlider2"
                     android:layout_width="match_parent"

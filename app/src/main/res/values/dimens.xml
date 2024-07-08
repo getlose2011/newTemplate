@@ -8,4 +8,11 @@
     <dimen name="txtSizeFontMedium">18sp</dimen>
     <dimen name="txtSizeFontLarge">22sp</dimen>
     <dimen name="txtSizeFontXLarge">26sp</dimen>
+    <dimen name="baseCardViewRadius">3dp</dimen>
+
+    <!-- 字級大小用通用 -->
+    <dimen name="text_size_small">14dp</dimen>
+    <dimen name="text_size_medium">18dp</dimen>
+    <dimen name="text_size_large">22dp</dimen>
+    <dimen name="text_size_h1">26dp</dimen>
 </resources>

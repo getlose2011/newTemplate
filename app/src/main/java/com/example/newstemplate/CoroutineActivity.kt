@@ -16,7 +16,7 @@ class CoroutineActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coroutine)
-
+        var name = Thread.currentThread().name
         /**
          *非同步取得資料，適用一筆一筆
          *可以比較api時間長短、位置取得的資料時間會時間上的差異

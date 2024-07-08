@@ -12,4 +12,6 @@
     <declare-styleable name="CustomRatioImage">
         <attr name="scale" format="string" />
     </declare-styleable>
+
+    <attr name="bottomDialogBackground" format="color" />
 </resources>

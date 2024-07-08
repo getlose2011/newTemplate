@@ -2,9 +2,12 @@ package com.example.newstemplate
 
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import android.webkit.CookieManager
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
@@ -93,11 +96,19 @@ class TxtSizeActivity : AppCompatActivity() {
 
         //init webview
         webView = binding.txtSizeWebView.apply {
-            settings.javaScriptEnabled = true
+            settings.textZoom = 100
+            setWebViewDefaultConfig(this)
+            //loadUrl("https://labm3.news.ebc.net.tw/news/article/330242")
+            setWebViewUrl()
             webViewClient = WebViewClient()
-            loadUrl("https://www.yahoo.com.tw")
         }
 
+    }
+
+    private fun setWebViewUrl() {
+
+
+        binding.txtSizeWebView.loadUrl("https://labm3.news.ebc.net.tw/news/article/330242")
     }
 
     //設定webview字型大小
@@ -131,6 +142,45 @@ class TxtSizeActivity : AppCompatActivity() {
         }
 
         binding.txtSizeTxv.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultSize)
+    }
+
+    /**
+     * 設定 WebView 與 ProgressBar 預設設定
+     *
+     * @param webView          WebView 元件
+     */
+    @SuppressLint("SetJavaScriptEnabled")
+    fun setWebViewDefaultConfig(webView: WebView) {
+
+        webView.apply {
+            //webView 在 nestedScrollView 內開啟此功能會出錯
+            //api19 以上開啟 Chromium 硬體加速功能
+            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            //setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+            settings.apply {
+                useWideViewPort = true     //開啟 Html Meta 功能
+                loadWithOverviewMode = true        //自動適應裝置螢幕大小
+                javaScriptEnabled = true       //啟用 Javascript 支援
+                javaScriptCanOpenWindowsAutomatically = true     //啟用 Javascript 可開啟視窗支援
+                //setAppCacheEnabled(true)      //開啟 Application H5 Caches 功能
+                cacheMode = WebSettings.LOAD_NO_CACHE      //強制不從快取讀取資料
+                builtInZoomControls = true       //開啟內部縮放功能
+                displayZoomControls = false      //關閉系統縮放控制項
+                domStorageEnabled = true        //開啟數據儲存(LocalStorage)
+                loadsImagesAutomatically = true     //自動加載圖片
+                javaScriptCanOpenWindowsAutomatically = true
+                setSupportMultipleWindows(true)
+            }
+
+            //allow cookie access
+            CookieManager.getInstance().setAcceptCookie(true)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW      //允許網頁內容混和模式
+                CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)      //允許第三方存取 cookie
+            }
+        }
     }
 
 }

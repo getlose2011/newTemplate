@@ -13,6 +13,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsTemplate">
         <activity
+            android:name=".LambdaLeakTestActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RecyclerMultiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewPager2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".WebViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BottomSheetSizeMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BottomSheetActivity"
+            android:exported="false" />
+        <activity
             android:name=".ViewPagerSimpleActivity"
             android:exported="false" />
         <activity
@@ -69,8 +88,11 @@
         <activity
             android:name=".ImageSliderActivity"
             android:exported="false" />
-        <activity
+         <activity
             android:name=".TxtSizeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PlayAudioActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -81,7 +103,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true" />
+
+        <service
+            android:name=".service.NotificationService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
