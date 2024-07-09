@@ -1,25 +1,24 @@
 package com.example.newstemplate
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.ComponentName
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.Build
+import android.content.IntentFilter
 import android.os.Bundle
-import android.os.IBinder
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.newstemplate.databinding.ActivityPlayAudioBinding
-import com.example.newstemplate.service.NotificationService
+import com.example.newstemplate.service.PlayService
 
 
 class PlayAudioActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayAudioBinding
-
-    private var myService: NotificationService? = null
     private var isBound = false
+
+
+    companion object{
+        val PLAY_RECEIVE_CODE_Intent_Filter = "PLAY_RECEIVE_CODE_Intent_Filter"
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,17 +26,27 @@ class PlayAudioActivity : AppCompatActivity() {
         binding = ActivityPlayAudioBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Bind to the service
-        // Bind to the service
-        //Intent(this, NotificationService::class.java)
-        val serviceIntent = Intent(this, NotificationService::class.java)
-        startService(serviceIntent)
-
         binding.playAudioBtn.setOnClickListener {
-
+            val intent = Intent(this, PlayService::class.java)
+            intent.putExtra("data", "Some important data")
+            startService(intent)
         }
+
+        binding.stopAudioBtn.setOnClickListener {
+            val intent = Intent(this, PlayService::class.java)
+            stopService(intent)
+        }
+
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(broadcastReceiver, IntentFilter(PLAY_RECEIVE_CODE_Intent_Filter))
     }
 
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val message = intent?.getStringExtra("message") ?: "No message"
+            binding.playAudioTxt.text = message
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -45,6 +54,7 @@ class PlayAudioActivity : AppCompatActivity() {
             //unbindService(serviceConnection)
             isBound = false
         }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
     }
 
 

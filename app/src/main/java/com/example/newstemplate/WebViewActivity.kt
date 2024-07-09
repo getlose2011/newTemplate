@@ -37,6 +37,8 @@ class WebViewActivity : AppCompatActivity() {
         mProgressBar = binding.progressBar.apply {
             visibility = View.VISIBLE
         }
+        //setSupportMultipleWindows(true)可搭配oncreatewindow
+        //setSupportMultipleWindows(false)所有連結都在webview執行
         binding.webView.apply {
             settings.textZoom = 100
             Generic.setWebViewDefaultConfig(this)

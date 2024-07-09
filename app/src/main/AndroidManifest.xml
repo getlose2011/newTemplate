@@ -108,10 +108,8 @@
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
 
-        <service
-            android:name=".service.NotificationService"
-            android:enabled="true"
-            android:exported="true" />
+        <service android:name=".service.PlayService"/>
+
     </application>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 

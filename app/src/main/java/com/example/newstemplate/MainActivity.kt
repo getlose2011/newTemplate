@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(WebViewActivity::class.java)
+        clickActivity(PlayAudioActivity::class.java)
         //clickActivity(RecyclerMultiActivity::class.java)
 
         //deleteCache(this)
