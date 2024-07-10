@@ -36,7 +36,7 @@ class PlayService : Service() {
         handler = Handler(Looper.getMainLooper())
         runnable = object : Runnable {
             override fun run() {
-                Log.d("PlayService", "Running task...")
+                Log.d("PlayService", "Running task... $i")
                 // 每隔一段時間執行的任務
                 sendBroadcastUpdate("Task running $i")
                 i++
@@ -47,13 +47,19 @@ class PlayService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // 取得從 Intent 傳遞過來的數據
+        val data = intent?.getStringExtra("data") ?: "No data"
+        Log.d("PlayService", "Data received: $data")
+        // 檢查是否由notification動作按鈕觸發
+        if (intent?.action == "BUTTON_3_CLICKED") {
+            Log.d("PlayService", "Data received: BUTTON_3_CLICKED")
+        }
+
         if (!isRunning) {
             isRunning = true
             Log.d("PlayService", "Service Started")
 
-            // 取得從 Intent 傳遞過來的數據
-            val data = intent?.getStringExtra("data") ?: "No data"
-            Log.d("PlayService", "Data received: $data")
+
             // 在這裡開始你的任務
             handler.post(runnable)
         } else {
@@ -75,6 +81,7 @@ class PlayService : Service() {
     }
 
     override fun onDestroy() {
+        handler.removeCallbacks(runnable)
         super.onDestroy()
         Log.d("PlayService", "Service Destroyed")
     }

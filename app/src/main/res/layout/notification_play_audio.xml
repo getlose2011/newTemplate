@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <!-- custom_notification.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+android:padding="10dp">
+
+<TextView
+    android:id="@+id/notification_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="自定義標題"
+    android:textSize="18sp"
+    android:textStyle="bold" />
+
+<TextView
+    android:id="@+id/notification_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="這是自定義通知內容"
+    android:textSize="14sp" />
+
+<Button
+    android:id="@+id/button1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="按鈕1" />
+
+<Button
+    android:id="@+id/button2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="按鈕2" />
+
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="按鈕3 service" />
+</LinearLayout>

@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(PlayAudioActivity::class.java)
+        clickActivity(ForegroundServicesMainActivity::class.java)
         //clickActivity(RecyclerMultiActivity::class.java)
 
         //deleteCache(this)
@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("viewpager 2", ViewPager2Activity::class.java))
             add(Tasks("test lambda memory leak", LambdaLeakTestActivity::class.java))
             add(Tasks("play audio service", PlayAudioActivity::class.java))
+            add(Tasks("Foreground Services", ForegroundServicesMainActivity::class.java))
             add(Tasks("webview", WebViewActivity::class.java))
         }
 
