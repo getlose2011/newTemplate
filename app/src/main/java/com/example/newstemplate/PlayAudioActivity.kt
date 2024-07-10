@@ -1,5 +1,9 @@
 package com.example.newstemplate
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,6 +12,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,11 +22,6 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.newstemplate.databinding.ActivityPlayAudioBinding
 import com.example.newstemplate.service.PlayService
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.widget.RemoteViews
 
 
 class PlayAudioActivity : AppCompatActivity() {
@@ -56,15 +56,18 @@ class PlayAudioActivity : AppCompatActivity() {
         }
 
         binding.stopAudioBtn.setOnClickListener {
-            val intent = Intent(this, PlayService::class.java)
-            stopService(intent)
+            //val intent = Intent(this, PlayService::class.java)
+            //stopService(intent)
+
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(12)
         }
 
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(broadcastReceiver, IntentFilter(PLAY_RECEIVE_CODE_Intent_Filter))
 
         // 創建通知渠道
-        //createNotificationChannel(this)
+        createNotificationChannel(this)
         showCustomNotification(this)
 
         // 檢查是否由動作按鈕觸發
@@ -213,18 +216,27 @@ class PlayAudioActivity : AppCompatActivity() {
         val button3PendingIntent: PendingIntent = PendingIntent.getService(context, 1, button3Intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         notificationLayout.setOnClickPendingIntent(R.id.button3, button3PendingIntent)
 
+        // 創建 PendingIntent，以便在點擊通知時打開 PlayAudioActivity
+        val deleteIntent = Intent(context, PlayAudioActivity::class.java).apply {
+            action = "DELETE"
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val deletePendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.breaking_news_symbol) // 替換為你的圖標
-            .setContent(notificationLayout) // 設置自定義通知佈局
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            //.setContent(notificationLayout) // 設置自定義通知佈局
+            //.setContentIntent(pendingIntent)
+            //.setAutoCancel(true)
+            //.setStyle(NotificationCompat.DecoratedCustomViewStyle())
+           // .setDeleteIntent(deletePendingIntent)
+            .setContentTitle("title")
+            .setContentText("body")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(12,builder)
 
-        with(NotificationManagerCompat.from(context)) {
-            // 顯示通知，通知 ID 需為唯一值
-            notify(1, builder.build())
-        }
     }
 
 

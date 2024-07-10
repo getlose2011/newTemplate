@@ -15,6 +15,7 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
 import com.example.newstemplate.ForegroundServicesMainActivity
+import com.example.newstemplate.PlayAudioActivity
 import com.example.newstemplate.R
 
 class FSService : Service() {
@@ -27,18 +28,25 @@ class FSService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(NOTIFICATION_ID, createNotification())
+        createNotificationChannel()
+        //startForeground(NOTIFICATION_ID, createNotification())
     }
 
     private fun createNotification(): Notification {
         // Create notification channel if Android version is Oreo or higher
-        createNotificationChannel()
+        //createNotificationChannel()
 
         // Create custom RemoteViews for the notification layout
         val customNotificationLayout = RemoteViews(packageName, R.layout.notification_play_audio)
         customNotificationLayout.setTextViewText(R.id.notification_title, "Custom Foreground Service")
         customNotificationLayout.setTextViewText(R.id.notification_text, "Running...")
 
+        // 創建 PendingIntent，以便在點擊通知時打開 PlayAudioActivity
+        val deleteIntent = Intent(applicationContext, ForegroundServicesMainActivity::class.java).apply {
+            action = "DELETE"
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val deletePendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         // Build the notification
         return NotificationCompat.Builder(this, CHANNEL_ID)
@@ -52,12 +60,15 @@ class FSService : Service() {
             //.setAutoCancel(true)
             //.setPriority(0)
             //.setStyle(NotificationCompat.DecoratedCustomViewStyle())
+
+            .setDeleteIntent(deletePendingIntent)
             .build()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        startForeground(NOTIFICATION_ID, createNotification())
         //return super.onStartCommand(intent, flags, startId)
-        //startForeground(NOTIFICATION_ID, createNotification())
         return START_STICKY
     }
 
@@ -76,5 +87,9 @@ class FSService : Service() {
         return null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
 
 }

@@ -53,6 +53,8 @@ class PlayService : Service() {
         // 檢查是否由notification動作按鈕觸發
         if (intent?.action == "BUTTON_3_CLICKED") {
             Log.d("PlayService", "Data received: BUTTON_3_CLICKED")
+        }else if (intent?.action == "DELETE") {
+            Log.d("PlayService", "Data received: DELETE")
         }
 
         if (!isRunning) {

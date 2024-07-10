@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,9 @@ class ForegroundServicesMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        if (intent?.action == "DELETE") {
+            Log.d("PlayService", "ForegroundServicesMainActivity: DELETE")
+        }
 
         // 檢查並請求通知權限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
