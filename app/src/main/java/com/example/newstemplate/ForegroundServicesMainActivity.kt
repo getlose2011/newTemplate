@@ -16,12 +16,11 @@ import com.example.newstemplate.service.FSService
 class ForegroundServicesMainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityForegroundServicesMainBinding
-    private val REQUEST_FOREGROUND_SERVICE = 1
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 // 權限授予後顯示通知
-                starts()
+                startService()
             } else {
                 // 權限被拒絕
                 Toast.makeText(this, "通知權限被拒絕", Toast.LENGTH_SHORT).show()
@@ -34,33 +33,55 @@ class ForegroundServicesMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        binding.fsStartBtn.setOnClickListener {
+            checkPermission()
+        }
+
+        binding.fsEndBtn.setOnClickListener {
+            if(FSService.isRunnig)endService()
+        }
+
         if (intent?.action == "DELETE") {
             Log.d("PlayService", "ForegroundServicesMainActivity: DELETE")
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        endService()
+    }
+
+    private fun checkPermission(){
         // 檢查並請求通知權限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.FOREGROUND_SERVICE) ==
                 PackageManager.PERMISSION_GRANTED
             ) {
                 // 權限已授予，顯示通知
-                starts()
+                startService()
             } else {
                 // 請求權限
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
         } else {
             // Android 13 以下版本直接顯示通知
-            starts()
+            startService()
         }
-
     }
 
+    private fun startService(){
+        if(!FSService.isRunnig){
+            Intent(this, FSService::class.java).apply {
+                ContextCompat.startForegroundService(this@ForegroundServicesMainActivity,this)
+            }
+        }
+    }
 
-    fun starts(){
-
-        val serviceIntent = Intent(this, FSService::class.java)
-        ContextCompat.startForegroundService(this, serviceIntent)
+    private fun endService(){
+        Intent(this, FSService::class.java).also { intent ->
+            stopService(intent)
+        }
     }
 
 }

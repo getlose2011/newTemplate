@@ -161,7 +161,8 @@ class PlayAudioActivity : AppCompatActivity() {
             .setContentText("這是一個簡單的通知示例")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
+            .setAutoCancel(false)
+            .setOngoing(true)
             .addAction(R.drawable.play, "play", actionPendingIntent) // 添加動作按鈕
 
         with(NotificationManagerCompat.from(context)) {
