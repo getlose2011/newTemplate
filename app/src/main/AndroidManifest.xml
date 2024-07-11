@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -15,9 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsTemplate">
         <activity
+            android:name=".ExoPlayerMainActivity"
+            android:exported="false" />
+        <activity
             android:name=".ForegroundServicesMainActivity"
             android:exported="false" />
-
         <activity
             android:name=".LambdaLeakTestActivity"
             android:exported="false" />
@@ -108,19 +108,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
 
-        <service
-            android:name=".service.FSService"
-
-     />
-
+        <service android:name=".service.FSService" />
         <service android:name=".service.PlayService" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 </manifest>

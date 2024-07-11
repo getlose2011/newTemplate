@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(ForegroundServicesMainActivity::class.java)
+        clickActivity(ExoPlayerMainActivity::class.java)
         //clickActivity(RecyclerMultiActivity::class.java)
 
         //deleteCache(this)
@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("play audio service", PlayAudioActivity::class.java))
             add(Tasks("Foreground Services", ForegroundServicesMainActivity::class.java))
             add(Tasks("webview", WebViewActivity::class.java))
+            add(Tasks("ExoPlayerMainActivity", ExoPlayerMainActivity::class.java))
         }
 
     }
