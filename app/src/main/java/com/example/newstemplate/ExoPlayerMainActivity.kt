@@ -1,5 +1,10 @@
 package com.example.newstemplate
 
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,7 +13,9 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.STATE_ENDED
@@ -17,8 +24,10 @@ import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerControlView
+import com.example.newstemplate.Receiver.ExoPlayerReceiver
 import com.example.newstemplate.databinding.ActivityExoPlayerMainBinding
 import com.example.newstemplate.service.ExoPlayerApi
+import com.example.newstemplate.service.ExoPlayerService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,8 +78,14 @@ class ExoPlayerMainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter(ExoPlayerReceiver.ACTION)
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
+    }
 
     override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
         stopHandler()
         playState(PlayStateEnum.RELEASE_PLAYER)
         super.onDestroy()
@@ -94,6 +109,11 @@ class ExoPlayerMainActivity : AppCompatActivity() {
                     //startUpdatingCurrentTime()
                     //add player list
                     player?.addMediaItems(mediaItems)
+
+                    Intent(this@ExoPlayerMainActivity, ExoPlayerService::class.java).apply {
+                        ContextCompat.startForegroundService(this@ExoPlayerMainActivity,this)
+                    }
+
                 }
             }
         }
@@ -106,7 +126,16 @@ class ExoPlayerMainActivity : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
                 player?.let{
-                    currentTv.text = formatTime(it.currentPosition)
+                    val c = formatTime(it.currentPosition)
+                    currentTv.text = c
+
+                    Intent(this@ExoPlayerMainActivity, ExoPlayerService::class.java).apply {
+                        action = "CURRENT_POSITION"
+                        putExtra("data", c)
+                    }.also {intent->
+                        startService(intent)
+                    }
+
                 }
                 handler.postDelayed(this, 1000) // 每秒更新一次
             }
@@ -176,8 +205,8 @@ class ExoPlayerMainActivity : AppCompatActivity() {
                 Log.d(TAG,"RELEASE_PLAYER")
             }
             PlayStateEnum.NEXT -> {
-                playIndex++
                 checkSeekPosition()
+                playIndex++
                 //player?.seekToDefaultPosition(playIndex)
             }
             PlayStateEnum.PREVIOUSE -> {
@@ -203,6 +232,7 @@ class ExoPlayerMainActivity : AppCompatActivity() {
             when(playbackState){
                 STATE_ENDED -> {
                     //全部播完
+                    stopHandler()
                     Log.d(TAG,"STATE_ENDED")
                 }
                 STATE_READY -> {
@@ -217,7 +247,15 @@ class ExoPlayerMainActivity : AppCompatActivity() {
             super.onTracksChanged(tracks)
             //換下一首
             Log.d(TAG,"onTracksChanged")
-            playIndex++
+            //playState(PlayStateEnum.NEXT)
+        }
+    }
+
+    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (ExoPlayerReceiver.ACTION == intent.action) {
+                playState(PlayStateEnum.NEXT)
+            }
         }
     }
 }
