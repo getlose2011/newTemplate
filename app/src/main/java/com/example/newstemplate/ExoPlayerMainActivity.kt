@@ -43,9 +43,10 @@ class ExoPlayerMainActivity : AppCompatActivity() {
 
     private var mediaItems: ArrayList<MediaItem> = arrayListOf()
     private var player: ExoPlayer?= null
+    private var isSeekingToDefaultPosition = false
     private lateinit var playerControlView: PlayerControlView
     //目前播放的位置(例如有十首音源檔，如果是2則是播放第3首音源檔)
-    private var playIndex = 0
+    //private var playIndex = 0
     private val handler = Handler(Looper.getMainLooper())
 
 
@@ -109,7 +110,7 @@ class ExoPlayerMainActivity : AppCompatActivity() {
                     //startUpdatingCurrentTime()
                     //add player list
                     player?.addMediaItems(mediaItems)
-
+player?.prepare()
                     Intent(this@ExoPlayerMainActivity, ExoPlayerService::class.java).apply {
                         ContextCompat.startForegroundService(this@ExoPlayerMainActivity,this)
                     }
@@ -141,6 +142,7 @@ class ExoPlayerMainActivity : AppCompatActivity() {
             }
         })
     }
+
 
     private fun stopHandler() {
         handler.removeCallbacksAndMessages(null) // 停止更新
@@ -205,13 +207,15 @@ class ExoPlayerMainActivity : AppCompatActivity() {
                 Log.d(TAG,"RELEASE_PLAYER")
             }
             PlayStateEnum.NEXT -> {
-                checkSeekPosition()
-                playIndex++
+                var index = player?.currentPeriodIndex?:0
+                index++
+                checkSeekPosition(index)
                 //player?.seekToDefaultPosition(playIndex)
             }
             PlayStateEnum.PREVIOUSE -> {
-                playIndex--
-                checkSeekPosition()
+                var index = player?.currentPeriodIndex?:1
+                index--
+                checkSeekPosition(index)
                 //player?.seekToDefaultPosition(playIndex)
             }
         }
@@ -220,11 +224,10 @@ class ExoPlayerMainActivity : AppCompatActivity() {
     /**
      * 選擇播放第幾首
      * */
-    private fun checkSeekPosition(){
+    private fun checkSeekPosition(index:Int){
         val c = mediaItems.count()
-        if(playIndex < 0)playIndex = 0
-        if(playIndex >= c)playIndex = c
-        player?.seekToDefaultPosition(playIndex)
+        isSeekingToDefaultPosition = true
+        player?.seekToDefaultPosition(if(index >= c) c - 1 else if(index<0) 0 else index)
     }
 
     private val playerListener = object: Player.Listener{
@@ -245,8 +248,15 @@ class ExoPlayerMainActivity : AppCompatActivity() {
 
         override fun onTracksChanged(tracks: Tracks) {
             super.onTracksChanged(tracks)
-            //換下一首
-            Log.d(TAG,"onTracksChanged")
+            if (isSeekingToDefaultPosition) {
+                // 忽略第一次触发
+                isSeekingToDefaultPosition = false
+                return
+            }
+
+            //
+            Log.d(TAG,"onTracksChanged ${player?.currentPeriodIndex}")
+
             //playState(PlayStateEnum.NEXT)
         }
     }
