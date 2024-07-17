@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityMainBinding
 import com.example.newstemplate.databinding.RowMainItemBinding
+import com.example.newstemplate.service.ExoPlayer2MainActivity
 
 
 interface IMainAdapterListener{
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerView.adapter = adapter
 
         //clickActivity(CustomSelectorActivity::class.java)
-        clickActivity(ExoPlayerMainActivity::class.java)
+        clickActivity(ExoPlayer2MainActivity::class.java)
         //clickActivity(RecyclerMultiActivity::class.java)
 
         //deleteCache(this)
