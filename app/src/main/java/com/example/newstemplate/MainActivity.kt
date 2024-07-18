@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newstemplate.databinding.ActivityMainBinding
 import com.example.newstemplate.databinding.RowMainItemBinding
-import com.example.newstemplate.service.ExoPlayer2MainActivity
 
 
 interface IMainAdapterListener{
@@ -70,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             add(Tasks("Foreground Services", ForegroundServicesMainActivity::class.java))
             add(Tasks("webview", WebViewActivity::class.java))
             add(Tasks("ExoPlayerMainActivity", ExoPlayerMainActivity::class.java))
+            add(Tasks("ExoPlayer2MainActivity", ExoPlayer2MainActivity::class.java))
         }
 
     }

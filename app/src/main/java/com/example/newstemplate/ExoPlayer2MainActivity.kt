@@ -1,26 +1,21 @@
-package com.example.newstemplate.service
+package com.example.newstemplate
 
 import android.app.Notification
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.newstemplate.R
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.OptIn
-import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.ui.PlayerNotificationManager
-import androidx.media3.session.MediaSessionService
 
 class ExoPlayer2MainActivity : AppCompatActivity() {
 
